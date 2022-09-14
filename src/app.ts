@@ -1,7 +1,9 @@
 import express, { Application, Request, Response } from "express";
+const cors = require( "cors");
 
 const app:Application = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/v1/api/", async (req: Request, res: Response): Promise<Response> => {
