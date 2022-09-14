@@ -4,18 +4,19 @@ import {firestore} from "firebase-admin";
 import Timestamp = firestore.Timestamp;
 
 const router = Router();
+
 /**
  * GET route
- * "/v1/api/todos"
- * Get all todos
+ * "/v1/api/notes"
+ * Get all notes
  */
-router.get("/todo", async (req, res)=>{
+router.get("/notes", async (req, res)=>{
     try {
-        const querySnapshot = await db.collection("todos").get();
-        const todos = querySnapshot.docs.map((doc) => ({
+        const querySnapshot = await db.collection("notes").get();
+        const notes = querySnapshot.docs.map((doc) => ({
             ...doc.data(),
         }));
-        res.send( { todos });
+        res.send( { notes });
     } catch (error) {
         console.error(error);
     }
@@ -23,17 +24,18 @@ router.get("/todo", async (req, res)=>{
 
 /**
  * GET route
- * "/v1/api/todos/:id"
- * Get single todos
+ * "/v1/api/notes/:id"
+ * Get single notes
  */
-router.get("/todo/:id", async (req, res)=>{
+router.get("/note/:id", async (req, res)=>{
 
-   await db.collection("todos").doc(req.params.id).get().then(
+   await db.collection("notes").doc(req.params.id).get().then(
         doc=> {
             if(!doc.exists){
-                res.send({'error':'No todo with this id'});
+                res.send({'error':'No note with this id'});
+                return;
             }
-            res.send({"todo":doc.data()})
+            res.send({"note":doc.data()})
         }
     ).catch(err => {
             console.error('Error fetching document: ', err);
@@ -46,31 +48,31 @@ router.get("/todo/:id", async (req, res)=>{
 
 /**
  * PUT route
- * "/v1/api/todos"
- * Add a todos
+ * "/v1/api/notes"
+ * Add a notes
  */
-router.put("/todo", async (req, res)=>{
+router.put("/note", async (req, res)=>{
     const {body} :any= req.body;
-    const documentReference = await db.collection("todos").doc();
+    const documentReference = await db.collection("notes").doc();
     await documentReference.set({
         id: documentReference.id,
         body: body,
         time: Timestamp.now()
     })
-    res.send("New Todo added")
+    res.send({"message":"New Note added"})
 });
 
 /**
  * PATCH route
- * "/v1/api/todos/:id"
- * Update a todos
+ * "/v1/api/notes/:id"
+ * Update a notes
  */
-router.patch("/todo/:id", async (req, res)=>{
+router.patch("/note/:id", async (req, res)=>{
     const {body} = req.body;
-    await db.collection("todos").doc(req.params.id).get().then(
+    await db.collection("notes").doc(req.params.id).get().then(
         doc=> {
             if(!doc.exists){
-                res.send({'error':'No todo with this id'});
+                res.send({'error':'No note with this id'});
             }
             doc.ref.update({
                 body: body
@@ -88,15 +90,16 @@ router.patch("/todo/:id", async (req, res)=>{
 
 /**
  * DELETE route
- * "/v1/api/todos/:id"
- * Delete a todos
+ * "/v1/api/notes/:id"
+ * Delete a notes
  */
-router.delete("/todo/:id", async (req, res)=>{
-    await db.collection("todos").doc(req.params.id).delete().catch(err => {
+router.delete("/note/:id", async (req, res)=>{
+    await db.collection("notes").doc(req.params.id).delete().catch(err => {
             console.error('Error fetching document: ', err);
             res.send({'error':'Error fetching data'});
         }
     )
+    res.send({"message": "Note successfully deleted"})
 });
 
 
