@@ -13,7 +13,6 @@ app.get("/v1/api/", async (req: Request, res: Response): Promise<Response> => {
   });
 });
 
-// app.use("/v1/api/", require("./routes/index"));
 app.use("/v1/api/", notesRoutes);
 app.use("/v1/api/", require("./routes/user"));
 
