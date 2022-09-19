@@ -1,6 +1,4 @@
 import db from "../../firebase";
-import { firestore } from "firebase-admin";
-import Timestamp = firestore.Timestamp;
 
 const getAllNotes = async () => {
   const querySnapshot = await db.collection("notes").get();
@@ -29,8 +27,8 @@ const createNote = async (body: string, author: string) => {
       id: documentReference.id,
       body,
       author,
-      time_created: Timestamp.now(),
-      time_updated: Timestamp.now(),
+      time_created: Date.now(),
+      time_updated: Date.now(),
       shared_to: [],
     })
     .then(() => {
