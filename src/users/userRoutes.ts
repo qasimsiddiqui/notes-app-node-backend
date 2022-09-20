@@ -5,7 +5,7 @@ const router: Router = Router();
 
 export function usersRoutes(): Router {
   router.route("/users").get(usersController.getAll);
-  router.route("/user/").put(usersController.create);
+  router.route("/user").put(usersController.create);
   return router;
 }
 

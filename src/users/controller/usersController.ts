@@ -13,9 +13,9 @@ class UsersController {
   }
 
   async create(req: Request, res: Response) {
-    const { uid, name, email }: any = req.body;
+    const { id, name, email }: any = req.body;
     try {
-      const result = await UsersService.createUser(uid, name, email);
+      const result = await UsersService.createUser(id, name, email);
       res.status(200).send(result);
     } catch (error) {
       console.error(error);

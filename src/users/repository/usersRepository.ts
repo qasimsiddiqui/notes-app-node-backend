@@ -8,7 +8,7 @@ const getAllUsers = async () => {
 };
 
 const createUser = async (uid: string, name: string, email: string) => {
-  const documentReference = await db
+  return await db
     .collection("users")
     .doc(uid)
     .set({
