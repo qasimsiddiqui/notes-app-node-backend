@@ -1,7 +1,10 @@
 import db from "../../firebase";
 
-const getAllNotes = async () => {
-  const querySnapshot = await db.collection("notes").get();
+const getAllNotes = async (uid: string) => {
+  const querySnapshot = await db
+    .collection("notes")
+    .where("author", "==", uid)
+    .get();
   return querySnapshot.docs.map((doc) => ({
     ...doc.data(),
   }));

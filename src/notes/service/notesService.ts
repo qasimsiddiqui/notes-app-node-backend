@@ -1,8 +1,8 @@
 import NotesRepository from "../repository/notesRepository";
 
-const getAllNotes = async () => {
+const getAllNotes = async (uid: string) => {
   try {
-    return await NotesRepository.getAllNotes();
+    return await NotesRepository.getAllNotes(uid);
   } catch (e: any) {
     throw new Error(e.message);
   }

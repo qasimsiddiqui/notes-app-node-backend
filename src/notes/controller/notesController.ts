@@ -4,7 +4,7 @@ import NotesService from "../service/notesService";
 class NotesController {
   async getAll(req: Request, res: Response) {
     try {
-      const notes = await NotesService.getAllNotes();
+      const notes = await NotesService.getAllNotes(res.locals.uid);
       res.status(200).send(notes);
     } catch (error) {
       console.error(error);
