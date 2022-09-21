@@ -48,6 +48,14 @@ const shareNote = async (noteID: string, userID: string) => {
   }
 };
 
+const getSharedNotes = async (uid: string) => {
+  try {
+    return await NotesRepository.getSharedNotes(uid);
+  } catch (e: any) {
+    throw new Error(e.message);
+  }
+};
+
 export default {
   getAllNotes,
   getSingleNote,
@@ -55,4 +63,5 @@ export default {
   updateNote,
   deleteNote,
   shareNote,
+  getSharedNotes,
 };

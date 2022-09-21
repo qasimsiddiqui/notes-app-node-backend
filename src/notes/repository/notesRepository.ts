@@ -88,6 +88,16 @@ const shareNote = async (noteID: string, userID: string) => {
     });
 };
 
+const getSharedNotes = async (uid: string) => {
+  const querySnapshot = await db
+    .collection("notes")
+    .where("shared_to", "array-contains", uid)
+    .get();
+  return querySnapshot.docs.map((doc) => ({
+    ...doc.data(),
+  }));
+};
+
 export default {
   getAllNotes,
   getSingleNote,
@@ -95,4 +105,5 @@ export default {
   updateNote,
   deleteNote,
   shareNote,
+  getSharedNotes,
 };

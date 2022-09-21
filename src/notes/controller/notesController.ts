@@ -67,6 +67,16 @@ class NotesController {
       res.status(500).send({ error: "Server error" });
     }
   }
+
+  async getSharedNotes(req: Request, res: Response) {
+    try {
+      const result = await NotesService.getSharedNotes(res.locals.uid);
+      res.status(200).send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: "Server error" });
+    }
+  }
 }
 
 export default new NotesController();
