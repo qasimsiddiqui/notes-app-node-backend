@@ -10,6 +10,7 @@ export function notesRoutes(): Router {
   router.route("/note/").put(middleware, notesController.create);
   router.route("/note/:id").patch(middleware, notesController.update);
   router.route("/note/:id").delete(middleware, notesController.delete);
+  router.route("/note/share").post(middleware, notesController.shareNote);
   return router;
 }
 

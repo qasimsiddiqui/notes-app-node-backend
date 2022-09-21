@@ -40,10 +40,19 @@ const deleteNote = async (noteID: string) => {
   }
 };
 
+const shareNote = async (noteID: string, userID: string) => {
+  try {
+    return await NotesRepository.shareNote(noteID, userID);
+  } catch (e: any) {
+    throw new Error(e.message);
+  }
+};
+
 export default {
   getAllNotes,
   getSingleNote,
   createNote,
   updateNote,
   deleteNote,
+  shareNote,
 };

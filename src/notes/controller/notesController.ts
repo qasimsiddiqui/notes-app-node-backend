@@ -56,6 +56,17 @@ class NotesController {
       res.status(500).send({ error: "Server error" });
     }
   }
+
+  async shareNote(req: Request, res: Response) {
+    const { noteID, userID }: any = req.body;
+    try {
+      const result = await NotesService.shareNote(noteID, userID);
+      res.status(200).send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: "Server error" });
+    }
+  }
 }
 
 export default new NotesController();
