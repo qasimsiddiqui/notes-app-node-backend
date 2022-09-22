@@ -1,6 +1,4 @@
 import db from "../../firebase";
-import { firestore } from "firebase-admin";
-import FieldValue = firestore.FieldValue;
 
 const getAllNotes = async (uid: string) => {
   const querySnapshot = await db
@@ -78,7 +76,7 @@ const shareNote = async (noteID: string, userID: string) => {
     .collection("notes")
     .doc(noteID)
     .update({
-      shared_to: FieldValue.arrayUnion(userID),
+      shared_to: userID,
     })
     .then(() => {
       return { message: "Note successfully shared" };
