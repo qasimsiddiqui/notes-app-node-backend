@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import notesRoutes from "./notes/notes.routes";
 import userRoutes from "./users/userRoutes";
+import commentRoutes from "./comments/commentRoutes";
 
 const cors = require("cors");
 const app: Application = express();
@@ -16,6 +17,7 @@ app.get("/v1/api/", async (req: Request, res: Response): Promise<Response> => {
 
 app.use("/v1/api/", notesRoutes);
 app.use("/v1/api/", userRoutes);
+app.use("/v1/api/", commentRoutes);
 
 try {
   app.listen(4000, (): void => {
