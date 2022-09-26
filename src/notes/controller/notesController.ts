@@ -24,9 +24,13 @@ class NotesController {
   }
 
   async create(req: Request, res: Response) {
-    const { body, author }: any = req.body;
+    const { body, author_id, author_name }: any = req.body;
     try {
-      const result = await NotesService.createNote(body, author);
+      const result = await NotesService.createNote(
+        body,
+        author_id,
+        author_name
+      );
       res.status(200).send(result);
     } catch (error) {
       console.error(error);

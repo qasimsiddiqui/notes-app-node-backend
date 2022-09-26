@@ -16,9 +16,13 @@ const getSingleNote = async (noteID: string) => {
   }
 };
 
-const createNote = async (body: string, author: string) => {
+const createNote = async (
+  body: string,
+  author_id: string,
+  author_name: string
+) => {
   try {
-    return await NotesRepository.createNote(body, author);
+    return await NotesRepository.createNote(body, author_id, author_name);
   } catch (e: any) {
     throw new Error(e.message);
   }

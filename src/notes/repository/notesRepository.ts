@@ -3,7 +3,7 @@ import db from "../../firebase";
 const getAllNotes = async (uid: string) => {
   const querySnapshot = await db
     .collection("notes")
-    .where("author", "==", uid)
+    .where("author_id", "==", uid)
     .get();
   return querySnapshot.docs.map((doc) => ({
     ...doc.data(),
@@ -23,13 +23,18 @@ const getSingleNote = async (noteID: string) => {
     });
 };
 
-const createNote = async (body: string, author: string) => {
+const createNote = async (
+  body: string,
+  author_id: string,
+  author_name: string
+) => {
   const documentReference = await db.collection("notes").doc();
   return await documentReference
     .set({
       id: documentReference.id,
       body,
-      author,
+      author_id,
+      author_name,
       time_created: Date.now(),
       time_updated: Date.now(),
       shared_to: [],
