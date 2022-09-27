@@ -7,6 +7,19 @@ const getAllUsers = async () => {
   }));
 };
 
+const getUser = async (uid: string) => {
+  return await db
+    .collection("users")
+    .doc(uid)
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        return { error: "No user with this id" };
+      }
+      return doc.data();
+    });
+};
+
 const createUser = async (uid: string, name: string, email: string) => {
   return await db
     .collection("users")
@@ -28,5 +41,6 @@ const createUser = async (uid: string, name: string, email: string) => {
 
 export default {
   getAllUsers,
+  getUser,
   createUser,
 };

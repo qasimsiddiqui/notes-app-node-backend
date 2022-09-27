@@ -6,6 +6,7 @@ const router: Router = Router();
 
 export function usersRoutes(): Router {
   router.route("/users").get(middleware, usersController.getAll);
+  router.route("/user/:id").get(middleware, usersController.getUser);
   router.route("/user").put(usersController.create);
   return router;
 }

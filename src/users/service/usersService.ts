@@ -8,6 +8,14 @@ const getAllUsers = async () => {
   }
 };
 
+const getUser = async (uid: string) => {
+  try {
+    return await UsersRepository.getUser(uid);
+  } catch (e: any) {
+    throw new Error(e.message);
+  }
+};
+
 const createUser = async (uid: string, name: string, email: string) => {
   try {
     return await UsersRepository.createUser(uid, name, email);
@@ -18,5 +26,6 @@ const createUser = async (uid: string, name: string, email: string) => {
 
 export default {
   getAllUsers,
+  getUser,
   createUser,
 };
