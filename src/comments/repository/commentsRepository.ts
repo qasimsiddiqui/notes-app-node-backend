@@ -25,6 +25,7 @@ const addComment = async (
       content,
       author_id: userID,
       author_name: userName,
+      isEdited: false,
       time_created: Date.now(),
       time_updated: Date.now(),
     })
@@ -83,6 +84,7 @@ const updateComment = async (
       .doc(commentID)
       .update({
         content,
+        isEdited: true,
         time_updated: Date.now(),
       })
       .then(() => {
