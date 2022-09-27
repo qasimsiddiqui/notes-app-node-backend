@@ -12,29 +12,39 @@ const getAll = async (noteID: string) => {
 
 const addComment = async (
   noteID: string,
+  noteAuthorID: string,
   userID: string,
   userName: string,
   content: string
 ) => {
-  const documentReference = await db
-    .collection(`notes/${noteID}/comments`)
-    .doc();
-  return await documentReference
-    .set({
-      comment_id: documentReference.id,
+  try {
+    const commentDocRef = await db.collection(`notes/${noteID}/comments`).doc();
+    await commentDocRef.set({
+      comment_id: commentDocRef.id,
       content,
       author_id: userID,
       author_name: userName,
       isEdited: false,
       time_created: Date.now(),
       time_updated: Date.now(),
-    })
-    .then(() => {
-      return { message: "New Comment added" };
-    })
-    .catch((err) => {
-      throw new Error(err.message);
     });
+
+    const docRef = await db
+      .collection(`users/${noteAuthorID}/notifications`)
+      .doc();
+
+    await docRef.set({
+      notification_id: docRef.id,
+      note_id: noteID,
+      type: "comment",
+      isRead: false,
+      time_created: Date.now(),
+      time_read: Date.now(),
+    });
+    return { message: "Comment successfully added" };
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
 };
 
 const deleteComment = async (

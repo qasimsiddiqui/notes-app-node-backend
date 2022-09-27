@@ -15,10 +15,11 @@ class CommentsController {
 
   async addComment(req: Request, res: Response) {
     const noteID = req.params.id;
-    const { author, content } = req.body;
+    const { author, content, note_author_id } = req.body;
     try {
       const comments = await CommentsService.addComment(
         noteID,
+        note_author_id,
         res.locals.uid,
         author,
         content

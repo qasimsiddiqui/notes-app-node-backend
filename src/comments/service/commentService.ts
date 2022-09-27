@@ -10,6 +10,7 @@ const getAll = async (noteID: string) => {
 
 const addComment = async (
   noteID: string,
+  noteAuthorID: string,
   userID: string,
   userName: string,
   content: string
@@ -17,6 +18,7 @@ const addComment = async (
   try {
     return await CommentsRepository.addComment(
       noteID,
+      noteAuthorID,
       userID,
       userName,
       content
