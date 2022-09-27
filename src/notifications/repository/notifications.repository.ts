@@ -4,7 +4,7 @@ export async function getAll(uid: string): Promise<any> {
   try {
     const querySnapshot = await db
       .collection(`users/${uid}/notifications`)
-      .orderBy("created_at", "desc")
+      .orderBy("time_created", "desc")
       .get();
     return querySnapshot.docs.map((doc) => ({
       ...doc.data(),
