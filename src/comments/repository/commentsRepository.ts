@@ -30,12 +30,14 @@ const addComment = async (
       time_updated: Date.now(),
     });
 
-    await NotificationRepository.addNotification(
-      noteID,
-      noteAuthorID,
-      userName,
-      "comment"
-    );
+    if (noteAuthorID !== userID) {
+      await NotificationRepository.addNotification(
+        noteID,
+        noteAuthorID,
+        userName,
+        "comment"
+      );
+    }
     return { message: "Comment successfully added" };
   } catch (error: any) {
     throw new Error(error.message);
