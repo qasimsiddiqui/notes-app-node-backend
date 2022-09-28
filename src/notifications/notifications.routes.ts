@@ -6,8 +6,13 @@ const router = Router();
 
 function notificationRoutes() {
   router
+    .route("/notifications/markAllAsRead")
+    .post(middleware, NotificationsController.markAllAsRead);
+
+  router
     .route("/notifications")
     .get(middleware, NotificationsController.getAll);
+
   router
     .route("/notification/:id")
     .post(middleware, NotificationsController.markAsRead);

@@ -22,3 +22,19 @@ export async function markAsRead(req: Request, res: Response) {
     res.status(500).send({ error: "Server error" });
   }
 }
+
+/**
+ * Mark all notifications as read
+ * @param req Request
+ * @param res Response
+ */
+export async function markAllAsRead(req: Request, res: Response) {
+  const uid = res.locals.uid;
+  try {
+    const result = await NotificationsService.markAllAsRead(uid);
+    res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Server error" });
+  }
+}

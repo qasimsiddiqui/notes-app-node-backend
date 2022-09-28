@@ -92,3 +92,38 @@ export async function addNotification(
     throw new Error(error.message);
   }
 }
+
+/**
+ * Mark all notifications as read
+ * @param uid
+ * @returns
+ */
+export async function markAllAsRead(uid: string) {
+  try {
+    const querySnapshot = await db
+      .collection(`users/${uid}/notifications`)
+      .where("isRead", "==", false)
+      .get();
+
+    if (querySnapshot.empty) {
+      return { error: "No notifications to mark as read" };
+    }
+
+    // Create batch to perform multiple writes as a single operation.
+    const batch: FirebaseFirestore.WriteBatch = db.batch();
+
+    querySnapshot.docs.forEach((doc) => {
+      batch.update(doc.ref, {
+        isRead: true,
+        time_read: Date.now(),
+      });
+    });
+
+    // Commit the batch
+    return await batch.commit().then(() => {
+      return { message: "All notifications marked as read" };
+    });
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}

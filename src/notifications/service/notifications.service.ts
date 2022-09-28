@@ -15,3 +15,15 @@ export async function markAsRead(uid: string, NotificationID: string) {
     throw new Error(error.message);
   }
 }
+
+/**
+ * Mark all notifications as read service
+ * @param uid User ID
+ */
+export async function markAllAsRead(uid: string) {
+  try {
+    return await NotificationRepository.markAllAsRead(uid);
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
