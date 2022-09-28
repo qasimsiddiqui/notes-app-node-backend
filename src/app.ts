@@ -3,9 +3,11 @@ import notesRoutes from "./notes/notes.routes";
 import userRoutes from "./users/userRoutes";
 import commentRoutes from "./comments/commentRoutes";
 import notificationsRoutes from "./notifications/notifications.routes";
+import * as dotenv from "dotenv";
 
 const cors = require("cors");
 const app: Application = express();
+dotenv.config();
 
 app.use(cors());
 app.use(express.json());
