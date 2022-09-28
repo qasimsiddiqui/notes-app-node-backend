@@ -8,9 +8,9 @@ export async function getAll(uid: string) {
   }
 }
 
-export async function mark(uid: string) {
+export async function markAsRead(uid: string, NotificationID: string) {
   try {
-    return await NotificationRepository.markAsRead(uid);
+    return await NotificationRepository.markAsRead(uid, NotificationID);
   } catch (error: any) {
     throw new Error(error.message);
   }

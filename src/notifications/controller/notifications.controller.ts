@@ -13,8 +13,9 @@ export async function getAll(req: Request, res: Response) {
 
 export async function markAsRead(req: Request, res: Response) {
   const uid = res.locals.uid;
+  const NotificationID = req.params.id;
   try {
-    const result = NotificationsService.getAll(uid);
+    const result = await NotificationsService.markAsRead(uid, NotificationID);
     res.status(200).send(result);
   } catch (error) {
     console.error(error);
