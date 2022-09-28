@@ -4,6 +4,7 @@ export async function getAll(uid: string): Promise<any> {
   try {
     const querySnapshot = await db
       .collection(`users/${uid}/notifications`)
+      .where("isRead", "==", false)
       .orderBy("time_created", "desc")
       .get();
     return querySnapshot.docs.map((doc) => ({
@@ -40,7 +41,7 @@ export async function markAsRead(uid: string, NotificationID: string) {
       })
       .catch((err) => {
         throw new Error(err.message);
-    });
+      });
   } catch (error: any) {
     throw new Error(error.message);
   }
