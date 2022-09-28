@@ -28,3 +28,9 @@ try {
 } catch (error: any) {
   console.error(`Error occurred: ${error.message}`);
 }
+
+// Terminate the process with a non-zero exit code
+process.on("SIGINT", () => {
+  console.log("Received SIGINT - Terminating.");
+  process.exit();
+});
