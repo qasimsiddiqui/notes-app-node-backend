@@ -1,4 +1,5 @@
 import db from "../../firebase";
+import * as NotificationRepository from "../../notifications/repository/notifications.repository";
 
 const getAll = async (noteID: string) => {
   const querySnapshot = await db
@@ -29,18 +30,12 @@ const addComment = async (
       time_updated: Date.now(),
     });
 
-    const docRef = await db
-      .collection(`users/${noteAuthorID}/notifications`)
-      .doc();
-
-    await docRef.set({
-      notification_id: docRef.id,
-      note_id: noteID,
-      type: "comment",
-      isRead: false,
-      time_created: Date.now(),
-      time_read: Date.now(),
-    });
+    await NotificationRepository.addNotification(
+      noteID,
+      noteAuthorID,
+      userName,
+      "comment"
+    );
     return { message: "Comment successfully added" };
   } catch (error: any) {
     throw new Error(error.message);

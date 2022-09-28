@@ -1,5 +1,11 @@
 import db from "../../firebase";
 
+/**
+ * Get all unread notifications for a user
+ * @param uid
+ * @returns
+ */
+
 export async function getAll(uid: string): Promise<any> {
   try {
     const querySnapshot = await db
@@ -42,6 +48,46 @@ export async function markAsRead(uid: string, NotificationID: string) {
       .catch((err) => {
         throw new Error(err.message);
       });
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+/**
+ * Add Notification
+ * @param noteID
+ * @param userID
+ * @param userName
+ * @param type
+ */
+export async function addNotification(
+  noteID: string,
+  userID: string,
+  userName: string,
+  type: string
+) {
+  try {
+    const docRef = await db.collection(`users/${userID}/notifications`).doc();
+
+    let message;
+    if (type === "comment") {
+      message = `${userName} commented on your note`;
+    }
+    if (type === "share") {
+      message = `${userName} shared a note with you`;
+    }
+
+    await docRef.set({
+      notification_id: docRef.id,
+      note_id: noteID,
+      message,
+      type: "comment",
+      isRead: false,
+      time_created: Date.now(),
+      time_read: Date.now(),
+    });
+
+    return { message: "Notification successfully added" };
   } catch (error: any) {
     throw new Error(error.message);
   }
