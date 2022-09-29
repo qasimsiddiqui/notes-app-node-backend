@@ -64,7 +64,11 @@ class NotesController {
   async shareNote(req: Request, res: Response) {
     const { noteID, userID }: any = req.body;
     try {
-      const result = await NotesService.shareNote(noteID, userID);
+      const result = await NotesService.shareNote(
+        noteID,
+        userID,
+        res.locals.uid
+      );
       res.status(200).send(result);
     } catch (error) {
       console.error(error);

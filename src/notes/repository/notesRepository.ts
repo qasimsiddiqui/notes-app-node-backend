@@ -77,15 +77,25 @@ const deleteNote = async (noteID: string) => {
     });
 };
 
-const shareNote = async (noteID: string, userIDs: [string]) => {
+const shareNote = async (
+  noteID: string,
+  usersList: [string],
+  userID: string
+) => {
+  const doc: any = (await db.collection("users").doc(userID).get()).data();
+
   return await db
     .collection("notes")
     .doc(noteID)
     .update({
-      shared_to: userIDs,
+      shared_to: usersList,
     })
     .then(async () => {
-      await NotificationRepository.addShareNotifications(noteID, userIDs);
+      await NotificationRepository.addShareNotifications(
+        noteID,
+        usersList,
+        doc.name
+      );
 
       return { message: "Note successfully shared" };
     })
