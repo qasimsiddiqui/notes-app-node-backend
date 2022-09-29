@@ -1,4 +1,5 @@
 import db from "../../firebase";
+import * as NotificationRepository from "../../notifications/repository/notifications.repository";
 
 const getAllNotes = async (uid: string) => {
   const querySnapshot = await db
@@ -76,14 +77,16 @@ const deleteNote = async (noteID: string) => {
     });
 };
 
-const shareNote = async (noteID: string, userID: string) => {
+const shareNote = async (noteID: string, userIDs: [string]) => {
   return await db
     .collection("notes")
     .doc(noteID)
     .update({
-      shared_to: userID,
+      shared_to: userIDs,
     })
-    .then(() => {
+    .then(async () => {
+      await NotificationRepository.addShareNotifications(noteID, userIDs);
+
       return { message: "Note successfully shared" };
     })
     .catch((err) => {
