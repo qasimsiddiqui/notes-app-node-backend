@@ -38,6 +38,7 @@ const createNote = async (
       author_name,
       time_created: Date.now(),
       time_updated: Date.now(),
+      isEdited: false,
       shared_to: [],
     })
     .then(() => {
@@ -55,7 +56,7 @@ const updateNote = async (noteID: string, body: string) => {
     return { error: "No note with this id" };
   }
   return await doc.ref
-    .update({ body: body, time_updated: Date.now() })
+    .update({ body: body, time_updated: Date.now(), isEdited: true })
     .then(() => {
       return { message: "Data updated" };
     })
