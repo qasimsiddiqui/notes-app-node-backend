@@ -55,7 +55,7 @@ const updateNote = async (noteID: string, body: string) => {
     return { error: "No note with this id" };
   }
   return await doc.ref
-    .update({ body: body })
+    .update({ body: body, time_updated: Date.now() })
     .then(() => {
       return { message: "Data updated" };
     })
