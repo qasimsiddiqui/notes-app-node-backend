@@ -44,7 +44,7 @@ const deleteNote = async (noteID: string) => {
   }
 };
 
-const shareNote = async (noteID: string, userID: string) => {
+const shareNote = async (noteID: string, userID: [string]) => {
   try {
     return await NotesRepository.shareNote(noteID, userID);
   } catch (e: any) {

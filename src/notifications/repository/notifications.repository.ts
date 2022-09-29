@@ -20,6 +20,7 @@ export async function getAll(uid: string): Promise<any> {
     throw new Error(error.message);
   }
 }
+
 /**
  * Mark Notification as Read
  * @param uid
@@ -58,24 +59,16 @@ export async function markAsRead(uid: string, NotificationID: string) {
  * @param noteID
  * @param userID
  * @param userName
- * @param type
  */
-export async function addNotification(
+export async function addCommentNotification(
   noteID: string,
   userID: string,
-  userName: string,
-  type: string
+  userName: string
 ) {
   try {
     const docRef = await db.collection(`users/${userID}/notifications`).doc();
 
-    let message;
-    if (type === "comment") {
-      message = `${userName} commented on your note`;
-    }
-    if (type === "share") {
-      message = `${userName} shared a note with you`;
-    }
+    const message = `${userName} commented on your note`;
 
     await docRef.set({
       notification_id: docRef.id,
@@ -88,6 +81,38 @@ export async function addNotification(
     });
 
     return { message: "Notification successfully added" };
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+/**
+ *
+ */
+export async function addShareNotifications(noteID: string, userIDs: [string]) {
+  try {
+    // Create batch to perform multiple writes as a single operation.
+    const batch: FirebaseFirestore.WriteBatch = db.batch();
+
+    const message = "User shared a note with you";
+
+    userIDs.forEach((userID) => {
+      const docRef = db.collection(`users/${userID}/notifications`).doc();
+      batch.create(docRef, {
+        notification_id: docRef.id,
+        note_id: noteID,
+        message,
+        type: "share",
+        isRead: false,
+        time_created: Date.now(),
+        time_read: Date.now(),
+      });
+    });
+
+    // Commit the batch
+    return await batch.commit().then(() => {
+      return { message: "Notifications sent users" };
+    });
   } catch (error: any) {
     throw new Error(error.message);
   }

@@ -31,11 +31,10 @@ const addComment = async (
     });
 
     if (noteAuthorID !== userID) {
-      await NotificationRepository.addNotification(
+      await NotificationRepository.addCommentNotification(
         noteID,
         noteAuthorID,
-        userName,
-        "comment"
+        userName
       );
     }
     return { message: "Comment successfully added" };
