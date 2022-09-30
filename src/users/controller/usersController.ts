@@ -2,7 +2,14 @@ import { Request, Response } from "express";
 import UsersService from "../service/usersService";
 
 class UsersController {
-  async getAll(req: Request, res: Response) {
+  /**
+   * @route GET api/users
+   * @description Get all users
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async getAll(req: Request, res: Response): Promise<void> {
     try {
       const users = await UsersService.getAllUsers();
       res.status(200).send(users);
@@ -12,7 +19,14 @@ class UsersController {
     }
   }
 
-  async getUser(req: Request, res: Response) {
+  /**
+   * @route GET api/user/:id
+   * @description Get a single user by id
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async getUser(req: Request, res: Response): Promise<void> {
     const uid: string = req.params.id;
     try {
       const users = await UsersService.getUser(uid);
@@ -23,7 +37,14 @@ class UsersController {
     }
   }
 
-  async create(req: Request, res: Response) {
+  /**
+   * @route PUT api/user
+   * @description Create a new user
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async create(req: Request, res: Response): Promise<void> {
     const { id, name, email } = req.body;
     try {
       const result = await UsersService.createUser(id, name, email);
