@@ -100,7 +100,7 @@ const shareNote = async (
 
       return { message: "Note successfully shared" };
     })
-    .catch((err) => {
+    .catch((err: any) => {
       throw new Error(err.message);
     });
 };
