@@ -1,6 +1,11 @@
 import db from "../../firebase";
 import * as NotificationRepository from "../../notifications/repository/notifications.repository";
 
+/**
+ *  Get all notes for a user
+ * @param uid
+ * @returns
+ */
 const getAllNotes = async (uid: string) => {
   const querySnapshot = await db
     .collection("notes")
