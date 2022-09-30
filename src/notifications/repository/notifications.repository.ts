@@ -87,21 +87,26 @@ export async function addCommentNotification(
 }
 
 /**
- *
+ * Add Share Notification
+ * @param noteID Note id of the note that was shared
+ * @param users Array of user ids that the note was shared to
+ * @param userName Name of the user that shared the note
  */
-export async function addShareNotifications(noteID: string, userIDs: [string]) {
+export async function addShareNotifications(
+  noteID: string,
+  users: any,
+  userName: string
+) {
   try {
     // Create batch to perform multiple writes as a single operation.
     const batch: FirebaseFirestore.WriteBatch = db.batch();
 
-    const message = "User shared a note with you";
-
-    userIDs.forEach((userID) => {
-      const docRef = db.collection(`users/${userID}/notifications`).doc();
+    users.forEach((user: any) => {
+      const docRef = db.collection(`users/${user}/notifications`).doc();
       batch.create(docRef, {
         notification_id: docRef.id,
         note_id: noteID,
-        message,
+        message: `${userName} shared a note with you`,
         type: "share",
         isRead: false,
         time_created: Date.now(),

@@ -11,17 +11,20 @@ const getAllNotes = async (uid: string) => {
   }));
 };
 
-const getSingleNote = async (noteID: string) => {
-  return await db
-    .collection("notes")
-    .doc(noteID)
-    .get()
-    .then((doc) => {
-      if (!doc.exists) {
-        return { error: "No note with this id" };
-      }
-      return doc.data();
-    });
+const getSingleNote = async (noteID: string, uid: string) => {
+  const doc = await db.collection("notes").doc(noteID).get();
+
+  if (!doc.exists) {
+    throw new Error("Note not found");
+  }
+
+  const note: any = doc.data();
+
+  if (note.author_id !== uid && !note.shared_to.includes(uid)) {
+    throw new Error("You are not authorized to view this note");
+  }
+
+  return note;
 };
 
 const createNote = async (
@@ -38,6 +41,7 @@ const createNote = async (
       author_name,
       time_created: Date.now(),
       time_updated: Date.now(),
+      isEdited: false,
       shared_to: [],
     })
     .then(() => {
@@ -55,7 +59,7 @@ const updateNote = async (noteID: string, body: string) => {
     return { error: "No note with this id" };
   }
   return await doc.ref
-    .update({ body: body })
+    .update({ body: body, time_updated: Date.now(), isEdited: true })
     .then(() => {
       return { message: "Data updated" };
     })
@@ -77,19 +81,29 @@ const deleteNote = async (noteID: string) => {
     });
 };
 
-const shareNote = async (noteID: string, userIDs: [string]) => {
+const shareNote = async (
+  noteID: string,
+  usersList: [string],
+  userID: string
+) => {
+  const doc: any = (await db.collection("users").doc(userID).get()).data();
+
   return await db
     .collection("notes")
     .doc(noteID)
     .update({
-      shared_to: userIDs,
+      shared_to: usersList,
     })
     .then(async () => {
-      await NotificationRepository.addShareNotifications(noteID, userIDs);
+      await NotificationRepository.addShareNotifications(
+        noteID,
+        usersList,
+        doc.name
+      );
 
       return { message: "Note successfully shared" };
     })
-    .catch((err) => {
+    .catch((err: any) => {
       throw new Error(err.message);
     });
 };

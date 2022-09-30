@@ -8,9 +8,9 @@ const getAllNotes = async (uid: string) => {
   }
 };
 
-const getSingleNote = async (noteID: string) => {
+const getSingleNote = async (noteID: string, uid: string) => {
   try {
-    return await NotesRepository.getSingleNote(noteID);
+    return await NotesRepository.getSingleNote(noteID, uid);
   } catch (e: any) {
     throw new Error(e.message);
   }
@@ -44,9 +44,13 @@ const deleteNote = async (noteID: string) => {
   }
 };
 
-const shareNote = async (noteID: string, userID: [string]) => {
+const shareNote = async (
+  noteID: string,
+  usersList: [string],
+  userID: string
+) => {
   try {
-    return await NotesRepository.shareNote(noteID, userID);
+    return await NotesRepository.shareNote(noteID, usersList, userID);
   } catch (e: any) {
     throw new Error(e.message);
   }
