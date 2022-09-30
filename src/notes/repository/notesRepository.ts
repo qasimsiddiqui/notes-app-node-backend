@@ -11,17 +11,20 @@ const getAllNotes = async (uid: string) => {
   }));
 };
 
-const getSingleNote = async (noteID: string) => {
-  return await db
-    .collection("notes")
-    .doc(noteID)
-    .get()
-    .then((doc) => {
-      if (!doc.exists) {
-        return { error: "No note with this id" };
-      }
-      return doc.data();
-    });
+const getSingleNote = async (noteID: string, uid: string) => {
+  const doc = await db.collection("notes").doc(noteID).get();
+
+  if (!doc.exists) {
+    throw new Error("Note not found");
+  }
+
+  const note: any = doc.data();
+
+  if (note.author_id !== uid && !note.shared_to.includes(uid)) {
+    throw new Error("You are not authorized to view this note");
+  }
+
+  return note;
 };
 
 const createNote = async (

@@ -8,9 +8,9 @@ const getAllNotes = async (uid: string) => {
   }
 };
 
-const getSingleNote = async (noteID: string) => {
+const getSingleNote = async (noteID: string, uid: string) => {
   try {
-    return await NotesRepository.getSingleNote(noteID);
+    return await NotesRepository.getSingleNote(noteID, uid);
   } catch (e: any) {
     throw new Error(e.message);
   }

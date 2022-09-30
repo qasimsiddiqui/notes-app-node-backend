@@ -15,11 +15,11 @@ class NotesController {
   async getSingle(req: Request, res: Response) {
     const noteID = req.params.id;
     try {
-      const note = await NotesService.getSingleNote(noteID);
+      const note = await NotesService.getSingleNote(noteID, res.locals.uid);
       res.status(200).send(note);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      res.status(500).send({ error: "Server error" });
+      res.status(500).send({ error: "Server error", message: error.message });
     }
   }
 
