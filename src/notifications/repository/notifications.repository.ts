@@ -26,17 +26,17 @@ export async function getAll(uid: string): Promise<NotificationInterface[]> {
 /**
  * Mark Notification as Read
  * @param {string} uid User ID
- * @param {String} NotificationID Notification ID to mark as read
+ * @param {String} NotificationId Notification ID to mark as read
  * @returns {Promise<any>}
  */
 export async function markAsRead(
   uid: string,
-  NotificationID: string
+  NotificationId: string
 ): Promise<any> {
   try {
     const doc = await db
       .collection(`users/${uid}/notifications`)
-      .doc(NotificationID)
+      .doc(NotificationId)
       .get();
 
     if (!doc.exists) {
@@ -61,24 +61,24 @@ export async function markAsRead(
 
 /**
  * Add Notification on Comment
- * @param {string} noteID Notification ID
- * @param {string} userID User ID
+ * @param {string} noteId Notification ID
+ * @param {string} userId User ID
  * @param {string} userName User Name
  * @returns {Promise<any>}
  */
 export async function addCommentNotification(
-  noteID: string,
-  userID: string,
+  noteId: string,
+  userId: string,
   userName: string
 ): Promise<any> {
   try {
-    const docRef = await db.collection(`users/${userID}/notifications`).doc();
+    const docRef = await db.collection(`users/${userId}/notifications`).doc();
 
     const message = `${userName} commented on your note`;
 
     await docRef.set({
       notification_id: docRef.id,
-      note_id: noteID,
+      note_id: noteId,
       message,
       type: "comment",
       isRead: false,
@@ -94,13 +94,13 @@ export async function addCommentNotification(
 
 /**
  * Add Notification on Share of note
- * @param {string} noteID Note id of the note that was shared
+ * @param {string} noteId Note id of the note that was shared
  * @param {string} users Array of user ids that the note was shared to
  * @param {string} userName Name of the user that shared the note
  * @returns {Promise<any>}
  */
 export async function addShareNotifications(
-  noteID: string,
+  noteId: string,
   users: any,
   userName: string
 ): Promise<any> {
@@ -112,7 +112,7 @@ export async function addShareNotifications(
       const docRef = db.collection(`users/${user}/notifications`).doc();
       batch.create(docRef, {
         notification_id: docRef.id,
-        note_id: noteID,
+        note_id: noteId,
         message: `${userName} shared a note with you`,
         type: "share",
         isRead: false,

@@ -11,12 +11,12 @@ import { CommentInterface } from "../model/comment.model";
 class NotesRepository {
   /**
    * Get all comments for a note
-   * @param {string} noteID Note ID
+   * @param {string} noteId Note ID
    * @returns {Promise<CommentInterface[]>}
    */
-  async getAll(noteID: string): Promise<CommentInterface[]> {
+  async getAll(noteId: string): Promise<CommentInterface[]> {
     const querySnapshot: QuerySnapshot = await db
-      .collection(`notes/${noteID}/comments`)
+      .collection(`notes/${noteId}/comments`)
       .orderBy("time_created")
       .get();
     return querySnapshot.docs.map(
@@ -28,38 +28,38 @@ class NotesRepository {
 
   /**
    * Add a comment to a note
-   * @param noteID Note ID
-   * @param noteAuthorID Note author user ID
-   * @param userID User ID
+   * @param noteId Note ID
+   * @param noteAuthorId Note author user ID
+   * @param userId User ID
    * @param userName User name
    * @param content Comment body
    * @returns {Promise<any>}
    */
   async addComment(
-    noteID: string,
-    noteAuthorID: string,
-    userID: string,
+    noteId: string,
+    noteAuthorId: string,
+    userId: string,
     userName: string,
     content: string
   ): Promise<any> {
     try {
       const commentDocRef: DocumentReference = await db
-        .collection(`notes/${noteID}/comments`)
+        .collection(`notes/${noteId}/comments`)
         .doc();
       await commentDocRef.set({
         comment_id: commentDocRef.id,
         content,
-        author_id: userID,
+        author_id: userId,
         author_name: userName,
         isEdited: false,
         time_created: Date.now(),
         time_updated: Date.now(),
       });
 
-      if (noteAuthorID !== userID) {
+      if (noteAuthorId !== userId) {
         await NotificationRepository.addCommentNotification(
-          noteID,
-          noteAuthorID,
+          noteId,
+          noteAuthorId,
           userName
         );
       }
@@ -71,27 +71,27 @@ class NotesRepository {
 
   /**
    * Delete a comment
-   * @param noteID  Note ID
-   * @param commentID Comment ID
-   * @param userID User ID
+   * @param noteId  Note ID
+   * @param commentId Comment ID
+   * @param userId User ID
    * @returns {Promise<any>}
    */
   async deleteComment(
-    noteID: string,
-    commentID: string,
-    userID: string
+    noteId: string,
+    commentId: string,
+    userId: string
   ): Promise<any> {
     const doc: DocumentData = await db
-      .collection(`notes/${noteID}/comments`)
-      .doc(commentID)
+      .collection(`notes/${noteId}/comments`)
+      .doc(commentId)
       .get();
 
     const comment: CommentInterface = doc.data() as CommentInterface;
 
-    if (comment.author_id === userID) {
+    if (comment.author_id === userId) {
       return await db
-        .collection(`notes/${noteID}/comments`)
-        .doc(commentID)
+        .collection(`notes/${noteId}/comments`)
+        .doc(commentId)
         .delete()
         .then(() => {
           return { message: "Comment successfully deleted" };
@@ -106,29 +106,29 @@ class NotesRepository {
 
   /**
    * Update a comment
-   * @param noteID Note ID
-   * @param commentID Comment ID
-   * @param userID User ID
+   * @param noteId Note ID
+   * @param commentId Comment ID
+   * @param userId User ID
    * @param content Comment body
    * @returns {Promise<any>}
    */
   async updateComment(
-    noteID: string,
-    commentID: string,
-    userID: string,
+    noteId: string,
+    commentId: string,
+    userId: string,
     content: string
   ): Promise<any> {
     const doc: DocumentData = await db
-      .collection(`notes/${noteID}/comments`)
-      .doc(commentID)
+      .collection(`notes/${noteId}/comments`)
+      .doc(commentId)
       .get();
 
     const comment: CommentInterface = doc.data() as CommentInterface;
 
-    if (comment.author_id === userID) {
+    if (comment.author_id === userId) {
       return await db
-        .collection(`notes/${noteID}/comments`)
-        .doc(commentID)
+        .collection(`notes/${noteId}/comments`)
+        .doc(commentId)
         .update({
           content,
           isEdited: true,

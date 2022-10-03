@@ -19,13 +19,13 @@ class NotesService {
   /**
    * Notes Service
    * Get a single note for a user
-   * @param noteID ID of note to be fetched
+   * @param noteId ID of note to be fetched
    * @param uid ID of user who is fetching the note
    * @returns { Promise<NotesInterface> } note
    */
-  async getSingleNote(noteID: string, uid: string): Promise<NotesInterface> {
+  async getSingleNote(noteId: string, uid: string): Promise<NotesInterface> {
     try {
-      return await NotesRepository.getSingleNote(noteID, uid);
+      return await NotesRepository.getSingleNote(noteId, uid);
     } catch (e: any) {
       throw new Error(e.message);
     }
@@ -34,13 +34,13 @@ class NotesService {
   /**
    * Create a new note
    * @param {string} body content of the note
-   * @param {string} author_id ID of the author of note
-   * @param {string} author_name Name of the author of note
+   * @param {string} authorId ID of the author of note
+   * @param {string} authorName Name of the author of note
    * @returns {Promise}
    */
-  async createNote(body: string, author_id: string, author_name: string) {
+  async createNote(body: string, authorId: string, authorName: string) {
     try {
-      return await NotesRepository.createNote(body, author_id, author_name);
+      return await NotesRepository.createNote(body, authorId, authorName);
     } catch (e: any) {
       throw new Error(e.message);
     }
@@ -48,13 +48,13 @@ class NotesService {
 
   /**
    * Update a note
-   * @param {string} noteID ID of note to be updated
+   * @param {string} noteId ID of note to be updated
    * @param {string} body new content of the note body
    * @returns {Promise}
    */
-  async updateNote(noteID: string, body: string): Promise<any> {
+  async updateNote(noteId: string, body: string): Promise<any> {
     try {
-      return await NotesRepository.updateNote(noteID, body);
+      return await NotesRepository.updateNote(noteId, body);
     } catch (e: any) {
       throw new Error(e.message);
     }
@@ -62,12 +62,12 @@ class NotesService {
 
   /**
    * Delete a note
-   * @param {string} noteID ID of note to be deleted
+   * @param {string} noteId ID of note to be deleted
    * @returns {Promise}
    */
-  async deleteNote(noteID: string): Promise<any> {
+  async deleteNote(noteId: string): Promise<any> {
     try {
-      return await NotesRepository.deleteNote(noteID);
+      return await NotesRepository.deleteNote(noteId);
     } catch (e: any) {
       throw new Error(e.message);
     }
@@ -75,18 +75,18 @@ class NotesService {
 
   /**
    * Share a note with a list of users
-   * @param {string} noteID  ID of note to be shared
+   * @param {string} noteId  ID of note to be shared
    * @param {string[]} usersList List of userIDs to whom note is shared
-   * @param {string} userID ID of the note author
+   * @param {string} userId ID of the note author
    * @returns {Promise}
    */
   async shareNote(
-    noteID: string,
+    noteId: string,
     usersList: [string],
-    userID: string
+    userId: string
   ): Promise<any> {
     try {
-      return await NotesRepository.shareNote(noteID, usersList, userID);
+      return await NotesRepository.shareNote(noteId, usersList, userId);
     } catch (e: any) {
       throw new Error(e.message);
     }

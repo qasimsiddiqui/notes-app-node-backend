@@ -16,15 +16,15 @@ export async function getAll(uid: string) {
 /**
  * Mark Notification as Read
  * @param {string} uid User ID
- * @param {string} NotificationID Notification ID to mark as read
+ * @param {string} NotificationId Notification ID to mark as read
  * @returns {Promise<any>}
  */
 export async function markAsRead(
   uid: string,
-  NotificationID: string
+  NotificationId: string
 ): Promise<any> {
   try {
-    return await NotificationRepository.markAsRead(uid, NotificationID);
+    return await NotificationRepository.markAsRead(uid, NotificationId);
   } catch (error: any) {
     throw new Error(error.message);
   }

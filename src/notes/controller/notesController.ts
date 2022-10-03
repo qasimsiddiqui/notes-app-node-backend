@@ -25,9 +25,9 @@ class NotesController {
    * @returns {Promise<void>}
    */
   async getSingle(req: Request, res: Response): Promise<void> {
-    const noteID = req.params.id;
+    const noteId = req.params.id;
     try {
-      const note = await NotesService.getSingleNote(noteID, res.locals.uid);
+      const note = await NotesService.getSingleNote(noteId, res.locals.uid);
       res.status(200).send(note);
     } catch (error: any) {
       console.error(error);
@@ -64,9 +64,9 @@ class NotesController {
    */
   async update(req: Request, res: Response): Promise<void> {
     const { body } = req.body;
-    const noteID = req.params.id;
+    const noteId = req.params.id;
     try {
-      const result = await NotesService.updateNote(noteID, body);
+      const result = await NotesService.updateNote(noteId, body);
       res.status(200).send(result);
     } catch (error) {
       console.error(error);
@@ -81,9 +81,9 @@ class NotesController {
    * @returns {Promise<void>}
    */
   async delete(req: Request, res: Response): Promise<void> {
-    const noteID = req.params.id;
+    const noteId = req.params.id;
     try {
-      const result = await NotesService.deleteNote(noteID);
+      const result = await NotesService.deleteNote(noteId);
       res.status(200).send(result);
     } catch (error) {
       console.error(error);
@@ -98,11 +98,11 @@ class NotesController {
    * @returns {Promise<void>}
    */
   async shareNote(req: Request, res: Response): Promise<void> {
-    const { noteID, userID }: any = req.body;
+    const { noteId, userId }: any = req.body;
     try {
       const result = await NotesService.shareNote(
-        noteID,
-        userID,
+        noteId,
+        userId,
         res.locals.uid
       );
       res.status(200).send(result);

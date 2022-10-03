@@ -9,9 +9,9 @@ class CommentsController {
    * @returns {Promise<void>}
    */
   async getAll(req: Request, res: Response): Promise<void> {
-    const noteID = req.params.id;
+    const noteId = req.params.id;
     try {
-      const comments = await CommentsService.getAll(noteID);
+      const comments = await CommentsService.getAll(noteId);
       res.status(200).send(comments);
     } catch (error) {
       console.error(error);
@@ -26,11 +26,11 @@ class CommentsController {
    * @returns {Promise<void>}
    */
   async addComment(req: Request, res: Response): Promise<void> {
-    const noteID = req.params.id;
+    const noteId = req.params.id;
     const { author, content, note_author_id } = req.body;
     try {
       const comments = await CommentsService.addComment(
-        noteID,
+        noteId,
         note_author_id,
         res.locals.uid,
         author,
@@ -50,12 +50,12 @@ class CommentsController {
    * @returns {Promise<void>}
    */
   async deleteComment(req: Request, res: Response): Promise<void> {
-    const noteID = req.params.id;
-    const commentID = req.params.commentID;
+    const noteId = req.params.id;
+    const commentId = req.params.commentId;
     try {
       const comments = await CommentsService.deleteComment(
-        noteID,
-        commentID,
+        noteId,
+        commentId,
         res.locals.uid
       );
       res.status(200).send(comments);
@@ -72,13 +72,13 @@ class CommentsController {
    * @returns {Promise<void>}
    */
   async updateComment(req: Request, res: Response): Promise<void> {
-    const noteID = req.params.id;
-    const commentID = req.params.commentID;
+    const noteId = req.params.id;
+    const commentId = req.params.commentId;
     const { content } = req.body;
     try {
       const comments = await CommentsService.updateComment(
-        noteID,
-        commentID,
+        noteId,
+        commentId,
         res.locals.uid,
         content
       );

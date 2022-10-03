@@ -12,11 +12,11 @@ export function commentsRoutes(): Router {
     .put(middleware, commentsController.addComment);
 
   router
-    .route("/note/:id/comment/:commentID")
+    .route("/note/:id/comment/:commentId")
     .delete(middleware, commentsController.deleteComment);
 
   router
-    .route("/note/:id/comment/:commentID")
+    .route("/note/:id/comment/:commentId")
     .patch(middleware, commentsController.updateComment);
 
   return router;

@@ -31,14 +31,14 @@ class NotesRepository {
   /**
    * @async
    * @function Get a single note for a user
-   * @param {string} noteID ID of note to be fetched
+   * @param {string} noteId ID of note to be fetched
    * @param {string} uid ID of user who is fetching the note
    * @returns { Promise<NotesInterface> } note
    */
-  async getSingleNote(noteID: string, uid: string): Promise<NotesInterface> {
+  async getSingleNote(noteId: string, uid: string): Promise<NotesInterface> {
     const doc: DocumentSnapshot = await db
       .collection("notes")
-      .doc(noteID)
+      .doc(noteId)
       .get();
 
     if (!doc.exists) {
@@ -59,22 +59,22 @@ class NotesRepository {
    * @async
    * @function Create a new note
    * @param {string} body content of the note
-   * @param {string} author_id ID of the author of note
-   * @param {string} author_name Name of the author of note
+   * @param {string} authorId ID of the author of note
+   * @param {string} authorName Name of the author of note
    * @returns {Promise}
    */
   async createNote(
     body: string,
-    author_id: string,
-    author_name: string
+    authorId: string,
+    authorName: string
   ): Promise<any> {
     const docRef: DocumentReference = db.collection("notes").doc();
     return await docRef
       .set({
         id: docRef.id,
         body,
-        author_id,
-        author_name,
+        author_id: authorId,
+        author_name: authorName,
         time_created: Date.now(),
         time_updated: Date.now(),
         isEdited: false,
@@ -91,14 +91,14 @@ class NotesRepository {
   /**
    * @async
    * @function Update a note
-   * @param {string} noteID ID of note to be updated
+   * @param {string} noteId ID of note to be updated
    * @param {string} body new content of the note body
    * @returns {Promise}
    */
-  async updateNote(noteID: string, body: string): Promise<any> {
+  async updateNote(noteId: string, body: string): Promise<any> {
     const doc: DocumentSnapshot = await db
       .collection("notes")
-      .doc(noteID)
+      .doc(noteId)
       .get();
 
     if (!doc.exists) {
@@ -118,13 +118,13 @@ class NotesRepository {
   /**
    * @async
    * @function Delete a note
-   * @param {string} noteID ID of note to be deleted
+   * @param {string} noteId ID of note to be deleted
    * @returns {Promise}
    */
-  async deleteNote(noteID: string): Promise<any> {
+  async deleteNote(noteId: string): Promise<any> {
     return await db
       .collection("notes")
-      .doc(noteID)
+      .doc(noteId)
       .delete()
       .then(() => {
         return { message: "Note successfully deleted" };
@@ -137,19 +137,19 @@ class NotesRepository {
   /**
    * @async
    * @function Share a note with a list of users
-   * @param {string} noteID  ID of note to be shared
+   * @param {string} noteId  ID of note to be shared
    * @param {string[]} usersList List of userIDs to whom note is shared
-   * @param {string} userID ID of the note author
+   * @param {string} userId ID of the note author
    * @returns {Promise}
    */
   async shareNote(
-    noteID: string,
+    noteId: string,
     usersList: [string],
-    userID: string
+    userId: string
   ): Promise<any> {
     const doc: DocumentSnapshot = await db
       .collection("users")
-      .doc(userID)
+      .doc(userId)
       .get();
 
     if (!doc.exists) {
@@ -160,13 +160,13 @@ class NotesRepository {
 
     return await db
       .collection("notes")
-      .doc(noteID)
+      .doc(noteId)
       .update({
         shared_to: usersList,
       })
       .then(async () => {
         await NotificationRepository.addShareNotifications(
-          noteID,
+          noteId,
           usersList,
           userData.name
         );
