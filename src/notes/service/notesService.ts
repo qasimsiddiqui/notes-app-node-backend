@@ -52,9 +52,9 @@ class NotesService {
    * @param {string} body new content of the note body
    * @returns {Promise}
    */
-  async updateNote(noteId: string, body: string): Promise<any> {
+  async updateNote(noteId: string, body: string, uid: string): Promise<any> {
     try {
-      return await NotesRepository.updateNote(noteId, body);
+      return await NotesRepository.updateNote(noteId, body, uid);
     } catch (e: any) {
       throw new Error(e.message);
     }

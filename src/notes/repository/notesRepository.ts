@@ -2,10 +2,10 @@ import db from "../../firebase";
 import * as NotificationRepository from "../../notifications/repository/notifications.repository";
 import {
   QuerySnapshot,
-  DocumentData,
   QueryDocumentSnapshot,
   DocumentSnapshot,
   DocumentReference,
+  WriteResult,
 } from "firebase-admin/lib/firestore";
 import { NotesInterface } from "../model/notes.interface";
 import { UserInterface } from "../../users/model/users.model";
@@ -43,12 +43,14 @@ class NotesRepository {
       .doc(noteId)
       .get();
 
+    // Check if note exists
     if (!doc.exists) {
       throw new Error("Note not found");
     }
 
     const note: NotesInterface = doc.data() as NotesInterface;
 
+    // Check if the note is deleted
     if (note.time_deleted !== null) {
       throw new Error("Note has been deleted");
     }
@@ -75,24 +77,23 @@ class NotesRepository {
     authorName: string
   ): Promise<any> {
     const docRef: DocumentReference = db.collection("notes").doc();
-    return await docRef
-      .set({
-        id: docRef.id,
-        body,
-        author_id: authorId,
-        author_name: authorName,
-        time_created: Date.now(),
-        time_updated: Date.now(),
-        time_deleted: null,
-        is_edited: false,
-        shared_to: [],
-      })
-      .then(() => {
-        return { message: "New Note added" };
-      })
-      .catch((err) => {
-        throw new Error(err.message);
-      });
+    const result: WriteResult = await docRef.set({
+      id: docRef.id,
+      body,
+      author_id: authorId,
+      author_name: authorName,
+      time_created: Date.now(),
+      time_updated: Date.now(),
+      time_deleted: null,
+      is_edited: false,
+      shared_to: [],
+    });
+
+    if (result.writeTime) {
+      return { message: "Note successfully created" };
+    } else {
+      throw new Error("Error creating note");
+    }
   }
 
   /**
@@ -100,26 +101,38 @@ class NotesRepository {
    * @function Update a note
    * @param {string} noteId ID of note to be updated
    * @param {string} body new content of the note body
+   * @param {string} uid ID of the user who is updating the note
    * @returns {Promise}
    */
-  async updateNote(noteId: string, body: string): Promise<any> {
+  async updateNote(noteId: string, body: string, uid: string): Promise<any> {
     const doc: DocumentSnapshot = await db
       .collection("notes")
       .doc(noteId)
       .get();
 
+    // Check if note exists
     if (!doc.exists) {
       throw new Error("No note with this id");
     }
 
-    return await doc.ref
-      .update({ body: body, time_updated: Date.now(), is_edited: true })
-      .then(() => {
-        return { message: "Data updated" };
-      })
-      .catch((err) => {
-        throw new Error(err.message);
-      });
+    const note: NotesInterface = doc.data() as NotesInterface;
+
+    // Check if user is the author of the note
+    if (note.author_id !== uid) {
+      throw new Error("You are not authorized to update this note");
+    }
+
+    const result: WriteResult = await doc.ref.update({
+      body: body,
+      time_updated: Date.now(),
+      is_edited: true,
+    });
+
+    if (result.writeTime) {
+      return { message: "Note successfully updated" };
+    } else {
+      throw new Error("Error updating note");
+    }
   }
 
   /**
@@ -134,28 +147,27 @@ class NotesRepository {
       .doc(noteId)
       .get();
 
+    // Check if note exists
     if (!doc.exists) {
       throw new Error("No note with this id");
     }
 
     const note: NotesInterface = doc.data() as NotesInterface;
 
+    // Check if user is the author of the note
     if (note.author_id !== uid) {
       throw new Error("You are not authorized to delete this note");
     }
 
-    return await db
-      .collection("notes")
-      .doc(noteId)
-      .update({
-        time_deleted: Date.now(),
-      })
-      .then(() => {
-        return { message: "Note successfully deleted" };
-      })
-      .catch((err) => {
-        throw new Error(err.message);
-      });
+    const result = await db.collection("notes").doc(noteId).update({
+      time_deleted: Date.now(),
+    });
+
+    if (result.writeTime) {
+      return { message: "Note successfully deleted" };
+    } else {
+      throw new Error("Error deleting note");
+    }
   }
 
   /**
@@ -176,30 +188,32 @@ class NotesRepository {
       .doc(userId)
       .get();
 
+    // Check if user exists
     if (!doc.exists) {
       throw new Error("No user with this id");
     }
 
     const userData: UserInterface = doc.data() as UserInterface;
 
-    return await db
+    const result: WriteResult = await db
       .collection("notes")
       .doc(noteId)
       .update({
         shared_to: usersList,
-      })
-      .then(async () => {
-        await NotificationRepository.addShareNotifications(
-          noteId,
-          usersList,
-          userData.name
-        );
-
-        return { message: "Note successfully shared" };
-      })
-      .catch((err: any) => {
-        throw new Error(err.message);
       });
+
+    if (result.writeTime) {
+      // Send notification to all users in the list
+      await NotificationRepository.addShareNotifications(
+        noteId,
+        usersList,
+        userData.name
+      );
+
+      return { message: "Note successfully shared" };
+    } else {
+      throw new Error("Error sharing note");
+    }
   }
 
   /**

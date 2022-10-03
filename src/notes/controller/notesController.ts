@@ -62,7 +62,11 @@ class NotesController {
     const { body } = req.body;
     const noteId = req.params.id;
     try {
-      const result = await NotesService.updateNote(noteId, body);
+      const result = await NotesService.updateNote(
+        noteId,
+        body,
+        res.locals.uid
+      );
       res.status(200).send(result);
     } catch (error) {
       console.error(error);
