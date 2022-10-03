@@ -3,6 +3,7 @@ import {
   QueryDocumentSnapshot,
   QuerySnapshot,
   DocumentData,
+  WriteResult,
 } from "firebase-admin/firestore";
 import db from "../../firebase";
 import * as NotificationRepository from "../../notifications/repository/notifications.repository";
@@ -43,7 +44,7 @@ class NotesRepository {
     content: string
   ): Promise<any> {
     try {
-      const commentDocRef: DocumentReference = await db
+      const commentDocRef: DocumentReference = db
         .collection(`notes/${noteId}/comments`)
         .doc();
       await commentDocRef.set({
@@ -81,26 +82,33 @@ class NotesRepository {
     commentId: string,
     userId: string
   ): Promise<any> {
+    // Get comment
     const doc: DocumentData = await db
       .collection(`notes/${noteId}/comments`)
       .doc(commentId)
       .get();
 
+    // Check if comment exists
+    if (!doc.exists) {
+      throw new Error("Comment does not exist");
+    }
+
     const comment: CommentInterface = doc.data() as CommentInterface;
 
-    if (comment.author_id === userId) {
-      return await db
-        .collection(`notes/${noteId}/comments`)
-        .doc(commentId)
-        .delete()
-        .then(() => {
-          return { message: "Comment successfully deleted" };
-        })
-        .catch((err) => {
-          throw new Error(err.message);
-        });
+    // Check if comment was created by user
+    if (comment.author_id !== userId) {
+      throw new Error("You are not authorized to delete this comment.");
+    }
+
+    const result: WriteResult = await db
+      .collection(`notes/${noteId}/comments`)
+      .doc(commentId)
+      .delete();
+
+    if (result.writeTime) {
+      return { message: "Comment successfully deleted" };
     } else {
-      return { message: "Comment not created by you." };
+      throw new Error("Error deleting comment");
     }
   }
 
@@ -118,30 +126,37 @@ class NotesRepository {
     userId: string,
     content: string
   ): Promise<any> {
+    // Get comment
     const doc: DocumentData = await db
       .collection(`notes/${noteId}/comments`)
       .doc(commentId)
       .get();
 
+    // Check if comment exists
+    if (!doc.exists) {
+      throw new Error("Comment does not exist");
+    }
+
     const comment: CommentInterface = doc.data() as CommentInterface;
 
-    if (comment.author_id === userId) {
-      return await db
-        .collection(`notes/${noteId}/comments`)
-        .doc(commentId)
-        .update({
-          content,
-          is_edited: true,
-          time_updated: Date.now(),
-        })
-        .then(() => {
-          return { message: "Comment successfully updated" };
-        })
-        .catch((err) => {
-          throw new Error(err.message);
-        });
+    // Check if comment was created by user
+    if (comment.author_id !== userId) {
+      throw new Error("You are not authorized to edit this comment");
+    }
+
+    const result: WriteResult = await db
+      .collection(`notes/${noteId}/comments`)
+      .doc(commentId)
+      .update({
+        content,
+        is_edited: true,
+        time_updated: Date.now(),
+      });
+
+    if (result.writeTime) {
+      return { message: "Comment successfully updated" };
     } else {
-      return { message: "Comment not created by you." };
+      throw new Error("Error updating comment");
     }
   }
 }
