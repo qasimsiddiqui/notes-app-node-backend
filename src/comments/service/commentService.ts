@@ -1,5 +1,5 @@
 import CommentsRepository from "../repository/commentsRepository";
-
+import * as NotificationService from "../../notifications/service/notifications.service";
 class CommentService {
   /**
    * Get all comments for a note
@@ -31,13 +31,23 @@ class CommentService {
     content: string
   ): Promise<any> {
     try {
-      return await CommentsRepository.addComment(
+      await CommentsRepository.addComment(
         noteId,
         noteAuthorId,
         userId,
         userName,
         content
       );
+
+      if (noteAuthorId !== userId) {
+        await NotificationService.addCommentNotification(
+          noteId,
+          noteAuthorId,
+          userName
+        );
+      }
+
+      return { message: "Comment successfully added" };
     } catch (e: any) {
       throw new Error(e.message);
     }

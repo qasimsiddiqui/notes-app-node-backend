@@ -42,3 +42,26 @@ export async function markAllAsRead(uid: string): Promise<any> {
     throw new Error(error.message);
   }
 }
+
+/**
+ * Add Notification on Comment
+ * @param {string} noteId Notification ID
+ * @param {string} userId User ID
+ * @param {string} userName User Name
+ * @returns {Promise<any>}
+ */
+export async function addCommentNotification(
+  noteId: string,
+  userId: string,
+  userName: string
+): Promise<any> {
+  try {
+    return await NotificationRepository.addCommentNotification(
+      noteId,
+      userId,
+      userName
+    );
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}

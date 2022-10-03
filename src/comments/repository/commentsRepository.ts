@@ -57,13 +57,6 @@ class NotesRepository {
         time_updated: Date.now(),
       });
 
-      if (noteAuthorId !== userId) {
-        await NotificationRepository.addCommentNotification(
-          noteId,
-          noteAuthorId,
-          userName
-        );
-      }
       return { message: "Comment successfully added" };
     } catch (error: any) {
       throw new Error(error.message);
