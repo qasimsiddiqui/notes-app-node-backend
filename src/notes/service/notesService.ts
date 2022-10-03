@@ -65,9 +65,9 @@ class NotesService {
    * @param {string} noteId ID of note to be deleted
    * @returns {Promise}
    */
-  async deleteNote(noteId: string): Promise<any> {
+  async deleteNote(noteId: string, uid: string): Promise<any> {
     try {
-      return await NotesRepository.deleteNote(noteId);
+      return await NotesRepository.deleteNote(noteId, uid);
     } catch (e: any) {
       throw new Error(e.message);
     }

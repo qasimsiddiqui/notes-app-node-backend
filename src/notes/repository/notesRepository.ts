@@ -20,6 +20,7 @@ class NotesRepository {
   async getAllNotes(uid: string): Promise<NotesInterface[]> {
     const querySnapshot: QuerySnapshot = await db
       .collection("notes")
+      .where("time_deleted", "==", null)
       .where("author_id", "==", uid)
       .get();
     return querySnapshot.docs.map(
@@ -47,6 +48,10 @@ class NotesRepository {
     }
 
     const note: NotesInterface = doc.data() as NotesInterface;
+
+    if (note.time_deleted !== null) {
+      throw new Error("Note has been deleted");
+    }
 
     // Check if user is the author or the note is shared with the user
     if (note.author_id !== uid && !note.shared_to.includes(uid)) {
@@ -78,6 +83,7 @@ class NotesRepository {
         author_name: authorName,
         time_created: Date.now(),
         time_updated: Date.now(),
+        time_deleted: null,
         is_edited: false,
         shared_to: [],
       })
@@ -122,11 +128,28 @@ class NotesRepository {
    * @param {string} noteId ID of note to be deleted
    * @returns {Promise}
    */
-  async deleteNote(noteId: string): Promise<any> {
+  async deleteNote(noteId: string, uid: string): Promise<any> {
+    const doc: DocumentSnapshot = await db
+      .collection("notes")
+      .doc(noteId)
+      .get();
+
+    if (!doc.exists) {
+      throw new Error("No note with this id");
+    }
+
+    const note: NotesInterface = doc.data() as NotesInterface;
+
+    if (note.author_id !== uid) {
+      throw new Error("You are not authorized to delete this note");
+    }
+
     return await db
       .collection("notes")
       .doc(noteId)
-      .delete()
+      .update({
+        time_deleted: Date.now(),
+      })
       .then(() => {
         return { message: "Note successfully deleted" };
       })
@@ -188,6 +211,7 @@ class NotesRepository {
   async getSharedNotes(uid: string): Promise<NotesInterface[]> {
     const querySnapshot: QuerySnapshot = await db
       .collection("notes")
+      .where("time_deleted", "==", null)
       .where("shared_to", "array-contains", uid)
       .get();
 

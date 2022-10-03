@@ -79,7 +79,7 @@ class NotesController {
   async delete(req: Request, res: Response): Promise<void> {
     const noteId = req.params.id;
     try {
-      const result = await NotesService.deleteNote(noteId);
+      const result = await NotesService.deleteNote(noteId, res.locals.uid);
       res.status(200).send(result);
     } catch (error) {
       console.error(error);
