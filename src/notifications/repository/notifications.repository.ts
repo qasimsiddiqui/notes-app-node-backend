@@ -1,5 +1,6 @@
 import { QueryDocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore";
 import db from "../../firebase";
+import { NotificationInterface } from "../model/notification.model";
 
 /**
  * Get all unread notifications for a user

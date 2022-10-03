@@ -1,4 +1,4 @@
-interface NotificationInterface {
+export interface NotificationInterface {
   notification_id: string;
   message: string;
   type: string;
