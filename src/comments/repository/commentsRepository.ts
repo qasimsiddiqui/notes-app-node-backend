@@ -51,7 +51,7 @@ class NotesRepository {
         content,
         author_id: userId,
         author_name: userName,
-        isEdited: false,
+        is_edited: false,
         time_created: Date.now(),
         time_updated: Date.now(),
       });
@@ -131,7 +131,7 @@ class NotesRepository {
         .doc(commentId)
         .update({
           content,
-          isEdited: true,
+          is_edited: true,
           time_updated: Date.now(),
         })
         .then(() => {

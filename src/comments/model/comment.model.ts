@@ -3,7 +3,7 @@ export interface CommentInterface {
   author_name: string;
   comment_id: string;
   content: string;
-  isEdited: boolean;
+  is_edited: boolean;
   time_created: number;
   time_updated: number;
 }
