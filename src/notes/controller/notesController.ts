@@ -42,7 +42,7 @@ class NotesController {
    * @returns {Promise<void>}
    */
   async create(req: Request, res: Response): Promise<void> {
-    const { body, authorId, authorName }: any = req.body;
+    const { body, authorId, authorName } = req.body;
     try {
       const result = await NotesService.createNote(body, authorId, authorName);
       res.status(200).send(result);
@@ -94,7 +94,7 @@ class NotesController {
    * @returns {Promise<void>}
    */
   async shareNote(req: Request, res: Response): Promise<void> {
-    const { noteId, userId }: any = req.body;
+    const { noteId, userId } = req.body;
     try {
       const result = await NotesService.shareNote(
         noteId,

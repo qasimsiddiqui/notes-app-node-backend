@@ -8,6 +8,7 @@ import {
   DocumentReference,
 } from "firebase-admin/lib/firestore";
 import { NotesInterface } from "../model/notes.interface";
+import { UserInterface } from "../../users/model/users.model";
 
 class NotesRepository {
   /**
@@ -153,10 +154,10 @@ class NotesRepository {
       .get();
 
     if (!doc.exists) {
-      throw new Error("No note with this id");
+      throw new Error("No user with this id");
     }
 
-    const userData: any = doc.data();
+    const userData: UserInterface = doc.data() as UserInterface;
 
     return await db
       .collection("notes")

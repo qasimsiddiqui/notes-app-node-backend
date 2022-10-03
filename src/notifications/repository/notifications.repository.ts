@@ -102,14 +102,14 @@ export async function addCommentNotification(
  */
 export async function addShareNotifications(
   noteId: string,
-  users: any,
+  users: string[],
   userName: string
 ): Promise<any> {
   try {
     // Create batch to perform multiple writes as a single operation.
     const batch: FirebaseFirestore.WriteBatch = db.batch();
 
-    users.forEach((user: any) => {
+    users.forEach((user: string) => {
       const docRef = db.collection(`users/${user}/notifications`).doc();
       batch.create(docRef, {
         notification_id: docRef.id,
