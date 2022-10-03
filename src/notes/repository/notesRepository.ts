@@ -77,7 +77,7 @@ class NotesRepository {
         author_name: authorName,
         time_created: Date.now(),
         time_updated: Date.now(),
-        isEdited: false,
+        is_edited: false,
         shared_to: [],
       })
       .then(() => {
@@ -106,7 +106,7 @@ class NotesRepository {
     }
 
     return await doc.ref
-      .update({ body: body, time_updated: Date.now(), isEdited: true })
+      .update({ body: body, time_updated: Date.now(), is_edited: true })
       .then(() => {
         return { message: "Data updated" };
       })

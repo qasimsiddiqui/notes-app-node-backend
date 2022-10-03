@@ -45,9 +45,9 @@ class UsersController {
    * @returns {Promise<void>}
    */
   async create(req: Request, res: Response): Promise<void> {
-    const { id, name, email } = req.body;
+    const { uid, name, email } = req.body;
     try {
-      const result = await UsersService.createUser(id, name, email);
+      const result = await UsersService.createUser(uid, name, email);
       res.status(200).send(result);
     } catch (error) {
       console.error(error);

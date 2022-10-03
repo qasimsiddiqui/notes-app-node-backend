@@ -11,7 +11,7 @@ export async function getAll(uid: string): Promise<NotificationInterface[]> {
   try {
     const querySnapshot: QuerySnapshot = await db
       .collection(`users/${uid}/notifications`)
-      .where("isRead", "==", false)
+      .where("is_read", "==", false)
       .orderBy("time_created", "desc")
       .get();
     return querySnapshot.docs.map(
@@ -46,7 +46,7 @@ export async function markAsRead(
 
     return await doc.ref
       .update({
-        isRead: true,
+        is_read: true,
         time_read: Date.now(),
       })
       .then(() => {
@@ -82,7 +82,7 @@ export async function addCommentNotification(
       note_id: noteId,
       message,
       type: "comment",
-      isRead: false,
+      is_read: false,
       time_created: Date.now(),
       time_read: Date.now(),
     });
@@ -116,7 +116,7 @@ export async function addShareNotifications(
         note_id: noteId,
         message: `${userName} shared a note with you`,
         type: "share",
-        isRead: false,
+        is_read: false,
         time_created: Date.now(),
         time_read: Date.now(),
       });
@@ -140,7 +140,7 @@ export async function markAllAsRead(uid: string): Promise<any> {
   try {
     const querySnapshot = await db
       .collection(`users/${uid}/notifications`)
-      .where("isRead", "==", false)
+      .where("is_read", "==", false)
       .get();
 
     if (querySnapshot.empty) {
@@ -152,7 +152,7 @@ export async function markAllAsRead(uid: string): Promise<any> {
 
     querySnapshot.docs.forEach((doc) => {
       batch.update(doc.ref, {
-        isRead: true,
+        is_read: true,
         time_read: Date.now(),
       });
     });
