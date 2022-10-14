@@ -2,7 +2,13 @@ import { Request, Response } from "express";
 import CommentsService from "../service/commentService";
 
 class CommentsController {
-  async getAll(req: Request, res: Response) {
+  /**
+   * Get all comments for a note
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async getAll(req: Request, res: Response): Promise<void> {
     const noteID = req.params.id;
     try {
       const comments = await CommentsService.getAll(noteID);
@@ -13,7 +19,13 @@ class CommentsController {
     }
   }
 
-  async addComment(req: Request, res: Response) {
+  /**
+   * Add a comment to a note
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async addComment(req: Request, res: Response): Promise<void> {
     const noteID = req.params.id;
     const { author, content, note_author_id } = req.body;
     try {
@@ -31,7 +43,13 @@ class CommentsController {
     }
   }
 
-  async deleteComment(req: Request, res: Response) {
+  /**
+   * Delete a comment
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async deleteComment(req: Request, res: Response): Promise<void> {
     const noteID = req.params.id;
     const commentID = req.params.commentID;
     try {
@@ -47,7 +65,13 @@ class CommentsController {
     }
   }
 
-  async updateComment(req: Request, res: Response) {
+  /**
+   * Edit a comment
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async updateComment(req: Request, res: Response): Promise<void> {
     const noteID = req.params.id;
     const commentID = req.params.commentID;
     const { content } = req.body;

@@ -1,26 +1,48 @@
 import db from "../../firebase";
+import { QueryDocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore";
+import { UserInterface } from "../model/users.model";
 
-const getAllUsers = async () => {
-  const querySnapshot = await db.collection("users").get();
-  return querySnapshot.docs.map((doc) => ({
-    ...doc.data(),
-  }));
+/**
+ * Get all users
+ * @returns {Promise<UserInterface[]>}
+ */
+const getAllUsers = async (): Promise<UserInterface[]> => {
+  const querySnapshot: QuerySnapshot = await db.collection("users").get();
+  return querySnapshot.docs.map((doc: QueryDocumentSnapshot): UserInterface => {
+    return doc.data() as UserInterface;
+  });
 };
 
-const getUser = async (uid: string) => {
+/**
+ * Get a single user by id
+ * @param {string} uid ID of user to be retrieved
+ * @returns {Promise<UserInterface>} user
+ */
+const getUser = async (uid: string): Promise<UserInterface> => {
   return await db
     .collection("users")
     .doc(uid)
     .get()
     .then((doc) => {
       if (!doc.exists) {
-        return { error: "No user with this id" };
+        throw new Error("No user with this id");
       }
-      return doc.data();
+      return doc.data() as UserInterface;
     });
 };
 
-const createUser = async (uid: string, name: string, email: string) => {
+/**
+ * Create a new user
+ * @param {string} uid ID of user
+ * @param {string} name  Name of user
+ * @param {string} email Email of user
+ * @returns {Promise<any>}
+ */
+const createUser = async (
+  uid: string,
+  name: string,
+  email: string
+): Promise<any> => {
   return await db
     .collection("users")
     .doc(uid)

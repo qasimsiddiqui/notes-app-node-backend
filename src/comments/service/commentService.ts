@@ -1,6 +1,11 @@
 import CommentsRepository from "../repository/commentsRepository";
 
-const getAll = async (noteID: string) => {
+/**
+ * Get all comments for a note
+ * @param {string} noteID Note ID
+ * @returns {Promise<any>}
+ */
+const getAll = async (noteID: string): Promise<any> => {
   try {
     return await CommentsRepository.getAll(noteID);
   } catch (e: any) {
@@ -8,13 +13,22 @@ const getAll = async (noteID: string) => {
   }
 };
 
+/**
+ * Add a comment to a note
+ * @param {sring} noteID Note ID
+ * @param {sring} noteAuthorID Note author ID
+ * @param {sring} userID User ID
+ * @param {sring} userName User name
+ * @param {sring} content Comment body
+ * @returns {Promise<any>}
+ */
 const addComment = async (
   noteID: string,
   noteAuthorID: string,
   userID: string,
   userName: string,
   content: string
-) => {
+): Promise<any> => {
   try {
     return await CommentsRepository.addComment(
       noteID,
@@ -28,11 +42,18 @@ const addComment = async (
   }
 };
 
+/**
+ * Delete a comment
+ * @param {string} noteID Note ID
+ * @param {string} commentID Comment ID
+ * @param {string} userID User ID
+ * @returns {Promise<any>}
+ */
 const deleteComment = async (
   noteID: string,
   commentID: string,
   userID: string
-) => {
+): Promise<any> => {
   try {
     return await CommentsRepository.deleteComment(noteID, commentID, userID);
   } catch (e: any) {
@@ -40,12 +61,20 @@ const deleteComment = async (
   }
 };
 
+/**
+ * Update a comment
+ * @param {string} noteID Note ID
+ * @param {string} commentID Comment ID
+ * @param {string} userID User ID
+ * @param {string} content Comment body
+ * @returns {Promise<any>}
+ */
 const updateComment = async (
   noteID: string,
   commentID: string,
   userID: string,
   content: string
-) => {
+): Promise<any> => {
   try {
     return await CommentsRepository.updateComment(
       noteID,

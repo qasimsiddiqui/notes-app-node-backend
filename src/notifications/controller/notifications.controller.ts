@@ -1,7 +1,14 @@
 import { Request, Response } from "express";
 import * as NotificationsService from "../service/notifications.service";
 
-export async function getAll(req: Request, res: Response) {
+/**
+ * @route  GET /notifications
+ * @description Get All unread Notifications
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+export async function getAll(req: Request, res: Response): Promise<void> {
   try {
     const result = await NotificationsService.getAll(res.locals.uid);
     res.status(200).send(result);
@@ -11,7 +18,14 @@ export async function getAll(req: Request, res: Response) {
   }
 }
 
-export async function markAsRead(req: Request, res: Response) {
+/**
+ * @route  POST /notification/:id
+ * @description Mark All Notifications as Read
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+export async function markAsRead(req: Request, res: Response): Promise<void> {
   const uid = res.locals.uid;
   const NotificationID = req.params.id;
   try {
@@ -24,11 +38,16 @@ export async function markAsRead(req: Request, res: Response) {
 }
 
 /**
- * Mark all notifications as read
- * @param req Request
- * @param res Response
+ * @route  POST /notifications/markAllAsRead
+ * @description Mark all notifications as read
+ * @param {Request} req Request
+ * @param {Response} res Response
+ * @returns {Promise<void>}
  */
-export async function markAllAsRead(req: Request, res: Response) {
+export async function markAllAsRead(
+  req: Request,
+  res: Response
+): Promise<void> {
   const uid = res.locals.uid;
   try {
     const result = await NotificationsService.markAllAsRead(uid);

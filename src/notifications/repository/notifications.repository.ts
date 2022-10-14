@@ -1,21 +1,23 @@
+import { QueryDocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore";
 import db from "../../firebase";
 
 /**
  * Get all unread notifications for a user
- * @param uid
- * @returns
+ * @param {string} uid User ID
+ * @returns {Promise<NotificationInterface[]>} Array of notifications
  */
-
-export async function getAll(uid: string): Promise<any> {
+export async function getAll(uid: string): Promise<NotificationInterface[]> {
   try {
-    const querySnapshot = await db
+    const querySnapshot: QuerySnapshot = await db
       .collection(`users/${uid}/notifications`)
       .where("isRead", "==", false)
       .orderBy("time_created", "desc")
       .get();
-    return querySnapshot.docs.map((doc) => ({
-      ...doc.data(),
-    }));
+    return querySnapshot.docs.map(
+      (doc: QueryDocumentSnapshot): NotificationInterface => {
+        return doc.data() as NotificationInterface;
+      }
+    );
   } catch (error: any) {
     throw new Error(error.message);
   }
@@ -23,11 +25,14 @@ export async function getAll(uid: string): Promise<any> {
 
 /**
  * Mark Notification as Read
- * @param uid
- * @param NotificationID
- * @returns
+ * @param {string} uid User ID
+ * @param {String} NotificationID Notification ID to mark as read
+ * @returns {Promise<any>}
  */
-export async function markAsRead(uid: string, NotificationID: string) {
+export async function markAsRead(
+  uid: string,
+  NotificationID: string
+): Promise<any> {
   try {
     const doc = await db
       .collection(`users/${uid}/notifications`)
@@ -55,16 +60,17 @@ export async function markAsRead(uid: string, NotificationID: string) {
 }
 
 /**
- * Add Notification
- * @param noteID
- * @param userID
- * @param userName
+ * Add Notification on Comment
+ * @param {string} noteID Notification ID
+ * @param {string} userID User ID
+ * @param {string} userName User Name
+ * @returns {Promise<any>}
  */
 export async function addCommentNotification(
   noteID: string,
   userID: string,
   userName: string
-) {
+): Promise<any> {
   try {
     const docRef = await db.collection(`users/${userID}/notifications`).doc();
 
@@ -87,16 +93,17 @@ export async function addCommentNotification(
 }
 
 /**
- * Add Share Notification
- * @param noteID Note id of the note that was shared
- * @param users Array of user ids that the note was shared to
- * @param userName Name of the user that shared the note
+ * Add Notification on Share of note
+ * @param {string} noteID Note id of the note that was shared
+ * @param {string} users Array of user ids that the note was shared to
+ * @param {string} userName Name of the user that shared the note
+ * @returns {Promise<any>}
  */
 export async function addShareNotifications(
   noteID: string,
   users: any,
   userName: string
-) {
+): Promise<any> {
   try {
     // Create batch to perform multiple writes as a single operation.
     const batch: FirebaseFirestore.WriteBatch = db.batch();
@@ -125,10 +132,10 @@ export async function addShareNotifications(
 
 /**
  * Mark all notifications as read
- * @param uid
- * @returns
+ * @param {string} uid User ID
+ * @returns {Promise<any>}
  */
-export async function markAllAsRead(uid: string) {
+export async function markAllAsRead(uid: string): Promise<any> {
   try {
     const querySnapshot = await db
       .collection(`users/${uid}/notifications`)

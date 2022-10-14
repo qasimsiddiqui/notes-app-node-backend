@@ -1,30 +1,52 @@
 import db from "../../firebase";
 import * as NotificationRepository from "../../notifications/repository/notifications.repository";
+import {
+  QuerySnapshot,
+  DocumentData,
+  QueryDocumentSnapshot,
+  DocumentSnapshot,
+  DocumentReference,
+} from "firebase-admin/lib/firestore";
+import { NotesInterface } from "../model/notes.interface";
 
 /**
- *  Get all notes for a user
- * @param uid
- * @returns
+ * @async
+ * @function Get all notes for a user
+ * @param {string} uid user id from Authorization header
+ * @returns {Promise<NotesInterface[]>} array of notes
  */
-const getAllNotes = async (uid: string) => {
-  const querySnapshot = await db
+const getAllNotes = async (uid: string): Promise<NotesInterface[]> => {
+  const querySnapshot: QuerySnapshot = await db
     .collection("notes")
     .where("author_id", "==", uid)
     .get();
-  return querySnapshot.docs.map((doc) => ({
-    ...doc.data(),
-  }));
+  return querySnapshot.docs.map(
+    (doc: QueryDocumentSnapshot): NotesInterface => {
+      return doc.data() as NotesInterface;
+    }
+  );
 };
 
-const getSingleNote = async (noteID: string, uid: string) => {
-  const doc = await db.collection("notes").doc(noteID).get();
+/**
+ * @async
+ * @function Get a single note for a user
+ * @param {string} noteID ID of note to be fetched
+ * @param {string} uid ID of user who is fetching the note
+ * @returns { Promise<NotesInterface> } note
+ */
+const getSingleNote = async (
+  noteID: string,
+  uid: string
+): Promise<NotesInterface> => {
+  const doc: DocumentSnapshot = await db.collection("notes").doc(noteID).get();
 
   if (!doc.exists) {
     throw new Error("Note not found");
   }
 
-  const note: any = doc.data();
+  const note: NotesInterface = doc.data() as NotesInterface;
 
+  // Check if user is the author or the note is shared with the user
   if (note.author_id !== uid && !note.shared_to.includes(uid)) {
     throw new Error("You are not authorized to view this note");
   }
@@ -32,15 +54,23 @@ const getSingleNote = async (noteID: string, uid: string) => {
   return note;
 };
 
+/**
+ * @async
+ * @function Create a new note
+ * @param {string} body content of the note
+ * @param {string} author_id ID of the author of note
+ * @param {string} author_name Name of the author of note
+ * @returns {Promise}
+ */
 const createNote = async (
   body: string,
   author_id: string,
   author_name: string
-) => {
-  const documentReference = await db.collection("notes").doc();
-  return await documentReference
+): Promise<any> => {
+  const docRef: DocumentReference = db.collection("notes").doc();
+  return await docRef
     .set({
-      id: documentReference.id,
+      id: docRef.id,
       body,
       author_id,
       author_name,
@@ -57,12 +87,20 @@ const createNote = async (
     });
 };
 
-const updateNote = async (noteID: string, body: string) => {
-  const doc = await db.collection("notes").doc(noteID).get();
+/**
+ * @async
+ * @function Update a note
+ * @param {string} noteID ID of note to be updated
+ * @param {string} body new content of the note body
+ * @returns {Promise}
+ */
+const updateNote = async (noteID: string, body: string): Promise<any> => {
+  const doc: DocumentSnapshot = await db.collection("notes").doc(noteID).get();
 
   if (!doc.exists) {
-    return { error: "No note with this id" };
+    throw new Error("No note with this id");
   }
+
   return await doc.ref
     .update({ body: body, time_updated: Date.now(), isEdited: true })
     .then(() => {
@@ -73,7 +111,13 @@ const updateNote = async (noteID: string, body: string) => {
     });
 };
 
-const deleteNote = async (noteID: string) => {
+/**
+ * @async
+ * @function Delete a note
+ * @param {string} noteID ID of note to be deleted
+ * @returns {Promise}
+ */
+const deleteNote = async (noteID: string): Promise<any> => {
   return await db
     .collection("notes")
     .doc(noteID)
@@ -86,12 +130,26 @@ const deleteNote = async (noteID: string) => {
     });
 };
 
+/**
+ * @async
+ * @function Share a note with a list of users
+ * @param {string} noteID  ID of note to be shared
+ * @param {string[]} usersList List of userIDs to whom note is shared
+ * @param {string} userID ID of the note author
+ * @returns {Promise}
+ */
 const shareNote = async (
   noteID: string,
   usersList: [string],
   userID: string
-) => {
-  const doc: any = (await db.collection("users").doc(userID).get()).data();
+): Promise<any> => {
+  const doc: DocumentSnapshot = await db.collection("users").doc(userID).get();
+
+  if (!doc.exists) {
+    throw new Error("No note with this id");
+  }
+
+  const userData: any = doc.data();
 
   return await db
     .collection("notes")
@@ -103,7 +161,7 @@ const shareNote = async (
       await NotificationRepository.addShareNotifications(
         noteID,
         usersList,
-        doc.name
+        userData.name
       );
 
       return { message: "Note successfully shared" };
@@ -113,14 +171,23 @@ const shareNote = async (
     });
 };
 
-const getSharedNotes = async (uid: string) => {
-  const querySnapshot = await db
+/**
+ * @async
+ * @function Get all notes shared with user
+ * @param {string} uid ID of user whose shared notes to fetch
+ * @returns {Promise}
+ */
+const getSharedNotes = async (uid: string): Promise<NotesInterface[]> => {
+  const querySnapshot: QuerySnapshot = await db
     .collection("notes")
     .where("shared_to", "array-contains", uid)
     .get();
-  return querySnapshot.docs.map((doc) => ({
-    ...doc.data(),
-  }));
+
+  return querySnapshot.docs.map(
+    (doc: QueryDocumentSnapshot): NotesInterface => {
+      return doc.data() as NotesInterface;
+    }
+  );
 };
 
 export default {

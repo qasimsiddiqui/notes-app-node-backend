@@ -2,7 +2,13 @@ import { Request, Response } from "express";
 import NotesService from "../service/notesService";
 
 class NotesController {
-  async getAll(req: Request, res: Response) {
+  /**
+   * @route GET /api/notes
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async getAll(req: Request, res: Response): Promise<void> {
     try {
       const notes = await NotesService.getAllNotes(res.locals.uid);
       res.status(200).send(notes);
@@ -12,7 +18,13 @@ class NotesController {
     }
   }
 
-  async getSingle(req: Request, res: Response) {
+  /**
+   * @route GET /api/note/:id
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async getSingle(req: Request, res: Response): Promise<void> {
     const noteID = req.params.id;
     try {
       const note = await NotesService.getSingleNote(noteID, res.locals.uid);
@@ -23,7 +35,13 @@ class NotesController {
     }
   }
 
-  async create(req: Request, res: Response) {
+  /**
+   * @route PUT /api/note
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async create(req: Request, res: Response): Promise<void> {
     const { body, author_id, author_name }: any = req.body;
     try {
       const result = await NotesService.createNote(
@@ -38,7 +56,13 @@ class NotesController {
     }
   }
 
-  async update(req: Request, res: Response) {
+  /**
+   * @route PATCH /api/note/:id
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async update(req: Request, res: Response): Promise<void> {
     const { body } = req.body;
     const noteID = req.params.id;
     try {
@@ -50,7 +74,13 @@ class NotesController {
     }
   }
 
-  async delete(req: Request, res: Response) {
+  /**
+   * @route DELETE /api/note/:id
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async delete(req: Request, res: Response): Promise<void> {
     const noteID = req.params.id;
     try {
       const result = await NotesService.deleteNote(noteID);
@@ -61,7 +91,13 @@ class NotesController {
     }
   }
 
-  async shareNote(req: Request, res: Response) {
+  /**
+   * @route POST /api/note/share
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async shareNote(req: Request, res: Response): Promise<void> {
     const { noteID, userID }: any = req.body;
     try {
       const result = await NotesService.shareNote(
@@ -76,7 +112,13 @@ class NotesController {
     }
   }
 
-  async getSharedNotes(req: Request, res: Response) {
+  /**
+   * @route GET /api/note/share
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   */
+  async getSharedNotes(req: Request, res: Response): Promise<void> {
     try {
       const result = await NotesService.getSharedNotes(res.locals.uid);
       res.status(200).send(result);
