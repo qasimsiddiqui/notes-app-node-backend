@@ -1,95 +1,102 @@
 import CommentsRepository from "../repository/commentsRepository";
-
-/**
- * Get all comments for a note
- * @param {string} noteID Note ID
- * @returns {Promise<any>}
- */
-const getAll = async (noteID: string): Promise<any> => {
-  try {
-    return await CommentsRepository.getAll(noteID);
-  } catch (e: any) {
-    throw new Error(e.message);
+import * as NotificationService from "../../notifications/service/notifications.service";
+class CommentService {
+  /**
+   * Get all comments for a note
+   * @param {string} noteId Note ID
+   * @returns {Promise<any>}
+   */
+  async getAll(noteId: string): Promise<any> {
+    try {
+      return await CommentsRepository.getAll(noteId);
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }
-};
 
-/**
- * Add a comment to a note
- * @param {sring} noteID Note ID
- * @param {sring} noteAuthorID Note author ID
- * @param {sring} userID User ID
- * @param {sring} userName User name
- * @param {sring} content Comment body
- * @returns {Promise<any>}
- */
-const addComment = async (
-  noteID: string,
-  noteAuthorID: string,
-  userID: string,
-  userName: string,
-  content: string
-): Promise<any> => {
-  try {
-    return await CommentsRepository.addComment(
-      noteID,
-      noteAuthorID,
-      userID,
-      userName,
-      content
-    );
-  } catch (e: any) {
-    throw new Error(e.message);
+  /**
+   * Add a comment to a note
+   * @param {sring} noteId Note ID
+   * @param {sring} noteAuthorId Note author ID
+   * @param {sring} userId User ID
+   * @param {sring} userName User name
+   * @param {sring} content Comment body
+   * @returns {Promise<any>}
+   */
+  async addComment(
+    noteId: string,
+    noteAuthorId: string,
+    userId: string,
+    userName: string,
+    content: string
+  ): Promise<any> {
+    try {
+      await CommentsRepository.addComment(
+        noteId,
+        noteAuthorId,
+        userId,
+        userName,
+        content
+      );
+
+      if (noteAuthorId !== userId) {
+        await NotificationService.addCommentNotification(
+          noteId,
+          noteAuthorId,
+          userName
+        );
+      }
+
+      return { message: "Comment successfully added" };
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }
-};
 
-/**
- * Delete a comment
- * @param {string} noteID Note ID
- * @param {string} commentID Comment ID
- * @param {string} userID User ID
- * @returns {Promise<any>}
- */
-const deleteComment = async (
-  noteID: string,
-  commentID: string,
-  userID: string
-): Promise<any> => {
-  try {
-    return await CommentsRepository.deleteComment(noteID, commentID, userID);
-  } catch (e: any) {
-    throw new Error(e.message);
+  /**
+   * Delete a comment
+   * @param {string} noteId Note ID
+   * @param {string} commentId Comment ID
+   * @param {string} userId User ID
+   * @returns {Promise<any>}
+   */
+  async deleteComment(
+    noteId: string,
+    commentId: string,
+    userId: string
+  ): Promise<any> {
+    try {
+      return await CommentsRepository.deleteComment(noteId, commentId, userId);
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }
-};
 
-/**
- * Update a comment
- * @param {string} noteID Note ID
- * @param {string} commentID Comment ID
- * @param {string} userID User ID
- * @param {string} content Comment body
- * @returns {Promise<any>}
- */
-const updateComment = async (
-  noteID: string,
-  commentID: string,
-  userID: string,
-  content: string
-): Promise<any> => {
-  try {
-    return await CommentsRepository.updateComment(
-      noteID,
-      commentID,
-      userID,
-      content
-    );
-  } catch (e: any) {
-    throw new Error(e.message);
+  /**
+   * Update a comment
+   * @param {string} noteId Note ID
+   * @param {string} commentId Comment ID
+   * @param {string} userId User ID
+   * @param {string} content Comment body
+   * @returns {Promise<any>}
+   */
+  async updateComment(
+    noteId: string,
+    commentId: string,
+    userId: string,
+    content: string
+  ): Promise<any> {
+    try {
+      return await CommentsRepository.updateComment(
+        noteId,
+        commentId,
+        userId,
+        content
+      );
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }
-};
+}
 
-export default {
-  getAll,
-  addComment,
-  deleteComment,
-  updateComment,
-};
+export default new CommentService();

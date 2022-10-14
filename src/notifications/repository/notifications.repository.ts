@@ -1,5 +1,10 @@
-import { QueryDocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore";
+import {
+  QueryDocumentSnapshot,
+  QuerySnapshot,
+  WriteResult,
+} from "firebase-admin/firestore";
 import db from "../../firebase";
+import { NotificationInterface } from "../model/notification.model";
 
 /**
  * Get all unread notifications for a user
@@ -7,126 +12,117 @@ import db from "../../firebase";
  * @returns {Promise<NotificationInterface[]>} Array of notifications
  */
 export async function getAll(uid: string): Promise<NotificationInterface[]> {
-  try {
-    const querySnapshot: QuerySnapshot = await db
-      .collection(`users/${uid}/notifications`)
-      .where("isRead", "==", false)
-      .orderBy("time_created", "desc")
-      .get();
-    return querySnapshot.docs.map(
-      (doc: QueryDocumentSnapshot): NotificationInterface => {
-        return doc.data() as NotificationInterface;
-      }
-    );
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
+  // Get all unread notifications for a user
+  const querySnapshot: QuerySnapshot = await db
+    .collection(`users/${uid}/notifications`)
+    .where("is_read", "==", false)
+    .orderBy("time_created", "desc")
+    .get();
+
+  return querySnapshot.docs.map(
+    (doc: QueryDocumentSnapshot): NotificationInterface => {
+      return doc.data() as NotificationInterface;
+    }
+  );
 }
 
 /**
  * Mark Notification as Read
  * @param {string} uid User ID
- * @param {String} NotificationID Notification ID to mark as read
+ * @param {String} NotificationId Notification ID to mark as read
  * @returns {Promise<any>}
  */
 export async function markAsRead(
   uid: string,
-  NotificationID: string
+  NotificationId: string
 ): Promise<any> {
-  try {
-    const doc = await db
-      .collection(`users/${uid}/notifications`)
-      .doc(NotificationID)
-      .get();
+  // Get the notification
+  const doc = await db
+    .collection(`users/${uid}/notifications`)
+    .doc(NotificationId)
+    .get();
 
-    if (!doc.exists) {
-      return { error: "No notification with this id" };
-    }
+  // Check if notification exists
+  if (!doc.exists) {
+    return { error: "No notification with this id" };
+  }
 
-    return await doc.ref
-      .update({
-        isRead: true,
-        time_read: Date.now(),
-      })
-      .then(() => {
-        return { message: "Notification marked as read" };
-      })
-      .catch((err) => {
-        throw new Error(err.message);
-      });
-  } catch (error: any) {
-    throw new Error(error.message);
+  // Update the notification
+  const result: WriteResult = await doc.ref.update({
+    is_read: true,
+    time_read: Date.now(),
+  });
+
+  if (result.writeTime) {
+    return { message: "Notification successfully marked as read" };
+  } else {
+    return { error: "Error marking notification as read" };
   }
 }
 
 /**
  * Add Notification on Comment
- * @param {string} noteID Notification ID
- * @param {string} userID User ID
+ * @param {string} noteId Notification ID
+ * @param {string} userId User ID
  * @param {string} userName User Name
  * @returns {Promise<any>}
  */
 export async function addCommentNotification(
-  noteID: string,
-  userID: string,
+  noteId: string,
+  userId: string,
   userName: string
 ): Promise<any> {
-  try {
-    const docRef = await db.collection(`users/${userID}/notifications`).doc();
+  const docRef = db.collection(`users/${userId}/notifications`).doc();
 
-    const message = `${userName} commented on your note`;
+  const message = `${userName} commented on your note`;
 
-    await docRef.set({
-      notification_id: docRef.id,
-      note_id: noteID,
-      message,
-      type: "comment",
-      isRead: false,
-      time_created: Date.now(),
-      time_read: Date.now(),
-    });
+  await docRef.set({
+    notification_id: docRef.id,
+    note_id: noteId,
+    message,
+    type: "comment",
+    is_read: false,
+    time_created: Date.now(),
+    time_read: Date.now(),
+  });
 
-    return { message: "Notification successfully added" };
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
+  return { message: "Notification successfully added" };
 }
 
 /**
  * Add Notification on Share of note
- * @param {string} noteID Note id of the note that was shared
+ * @param {string} noteId Note id of the note that was shared
  * @param {string} users Array of user ids that the note was shared to
  * @param {string} userName Name of the user that shared the note
  * @returns {Promise<any>}
  */
 export async function addShareNotifications(
-  noteID: string,
-  users: any,
+  noteId: string,
+  users: string[],
   userName: string
 ): Promise<any> {
-  try {
-    // Create batch to perform multiple writes as a single operation.
-    const batch: FirebaseFirestore.WriteBatch = db.batch();
+  // Create batch to perform multiple writes as a single operation.
+  const batch: FirebaseFirestore.WriteBatch = db.batch();
 
-    users.forEach((user: any) => {
-      const docRef = db.collection(`users/${user}/notifications`).doc();
-      batch.create(docRef, {
-        notification_id: docRef.id,
-        note_id: noteID,
-        message: `${userName} shared a note with you`,
-        type: "share",
-        isRead: false,
-        time_created: Date.now(),
-        time_read: Date.now(),
-      });
+  users.forEach((user: string) => {
+    const docRef = db.collection(`users/${user}/notifications`).doc();
+    batch.create(docRef, {
+      notification_id: docRef.id,
+      note_id: noteId,
+      message: `${userName} shared a note with you`,
+      type: "share",
+      is_read: false,
+      time_created: Date.now(),
+      time_read: Date.now(),
     });
+  });
 
-    // Commit the batch
-    return await batch.commit().then(() => {
-      return { message: "Notifications sent users" };
-    });
-  } catch (error: any) {
-    throw new Error(error.message);
+  // Commit the batch
+  const result: WriteResult[] = await batch.commit();
+  if (result.length > 0) {
+    return { message: "Notifications successfully sent to users" };
+  } else {
+    throw new Error("Error adding notifications");
   }
 }
 
@@ -136,31 +132,33 @@ export async function addShareNotifications(
  * @returns {Promise<any>}
  */
 export async function markAllAsRead(uid: string): Promise<any> {
-  try {
-    const querySnapshot = await db
-      .collection(`users/${uid}/notifications`)
-      .where("isRead", "==", false)
-      .get();
+  const querySnapshot = await db
+    .collection(`users/${uid}/notifications`)
+    .where("is_read", "==", false)
+    .get();
 
-    if (querySnapshot.empty) {
-      return { error: "No notifications to mark as read" };
-    }
+  // No notification to mark as read
+  if (querySnapshot.empty) {
+    return { error: "No notifications to mark as read" };
+  }
 
-    // Create batch to perform multiple writes as a single operation.
-    const batch: FirebaseFirestore.WriteBatch = db.batch();
+  // Create batch to perform multiple writes as a single operation.
+  const batch: FirebaseFirestore.WriteBatch = db.batch();
 
-    querySnapshot.docs.forEach((doc) => {
-      batch.update(doc.ref, {
-        isRead: true,
-        time_read: Date.now(),
-      });
+  // Mark notifications as read
+  querySnapshot.docs.forEach((doc) => {
+    batch.update(doc.ref, {
+      is_read: true,
+      time_read: Date.now(),
     });
+  });
 
-    // Commit the batch
-    return await batch.commit().then(() => {
-      return { message: "All notifications marked as read" };
-    });
-  } catch (error: any) {
-    throw new Error(error.message);
+  // Commit the batch
+  const result: WriteResult[] = await batch.commit();
+
+  if (result.length > 0) {
+    return { message: "All notifications successfully marked as read" };
+  } else {
+    throw new Error("Error marking notifications as read");
   }
 }

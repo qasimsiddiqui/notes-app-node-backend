@@ -3,7 +3,8 @@ export interface NotesInterface {
   body: string;
   time_created: number;
   time_updated: number;
-  isEdited: boolean;
+  time_deleted: number | null;
+  is_edited: boolean;
   shared_to: string[];
   author_id: string;
   author_name: string;
