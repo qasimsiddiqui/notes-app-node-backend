@@ -11,6 +11,8 @@ import { NotesInterface } from "../model/notes.interface";
 import { UserInterface } from "../../users/model/users.model";
 
 class NotesRepository {
+  private NOTES_COLLECTION: string = "notes";
+
   /**
    * @async
    * @function Get all notes for a user
@@ -19,7 +21,7 @@ class NotesRepository {
    */
   async getAllNotes(uid: string): Promise<NotesInterface[]> {
     const querySnapshot: QuerySnapshot = await db
-      .collection("notes")
+      .collection(this.NOTES_COLLECTION)
       .where("time_deleted", "==", null)
       .where("author_id", "==", uid)
       .get();
@@ -39,7 +41,7 @@ class NotesRepository {
    */
   async getSingleNote(noteId: string, uid: string): Promise<NotesInterface> {
     const doc: DocumentSnapshot = await db
-      .collection("notes")
+      .collection(this.NOTES_COLLECTION)
       .doc(noteId)
       .get();
 
@@ -76,7 +78,9 @@ class NotesRepository {
     authorId: string,
     authorName: string
   ): Promise<any> {
-    const docRef: DocumentReference = db.collection("notes").doc();
+    const docRef: DocumentReference = db
+      .collection(this.NOTES_COLLECTION)
+      .doc();
     const result: WriteResult = await docRef.set({
       id: docRef.id,
       body,
@@ -106,7 +110,7 @@ class NotesRepository {
    */
   async updateNote(noteId: string, body: string, uid: string): Promise<any> {
     const doc: DocumentSnapshot = await db
-      .collection("notes")
+      .collection(this.NOTES_COLLECTION)
       .doc(noteId)
       .get();
 
@@ -143,7 +147,7 @@ class NotesRepository {
    */
   async deleteNote(noteId: string, uid: string): Promise<any> {
     const doc: DocumentSnapshot = await db
-      .collection("notes")
+      .collection(this.NOTES_COLLECTION)
       .doc(noteId)
       .get();
 
@@ -159,9 +163,12 @@ class NotesRepository {
       throw new Error("You are not authorized to delete this note");
     }
 
-    const result = await db.collection("notes").doc(noteId).update({
-      time_deleted: Date.now(),
-    });
+    const result = await db
+      .collection(this.NOTES_COLLECTION)
+      .doc(noteId)
+      .update({
+        time_deleted: Date.now(),
+      });
 
     if (result.writeTime) {
       return { message: "Note successfully deleted" };
@@ -196,7 +203,7 @@ class NotesRepository {
     const userData: UserInterface = doc.data() as UserInterface;
 
     const result: WriteResult = await db
-      .collection("notes")
+      .collection(this.NOTES_COLLECTION)
       .doc(noteId)
       .update({
         shared_to: usersList,
@@ -224,7 +231,7 @@ class NotesRepository {
    */
   async getSharedNotes(uid: string): Promise<NotesInterface[]> {
     const querySnapshot: QuerySnapshot = await db
-      .collection("notes")
+      .collection(this.NOTES_COLLECTION)
       .where("time_deleted", "==", null)
       .where("shared_to", "array-contains", uid)
       .get();
