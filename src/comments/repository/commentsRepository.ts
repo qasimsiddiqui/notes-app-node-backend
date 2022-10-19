@@ -6,9 +6,12 @@ import {
   WriteResult,
 } from "firebase-admin/firestore";
 import db from "../../firebase";
-import { NOTES_COLLECTION } from "../../notes/model/notes.interface";
+import {
+  NOTES_COLLECTION,
+  COMMENTS_COLLECTION,
+} from "../../constants/collection.constants";
 import * as NotificationRepository from "../../notifications/repository/notifications.repository";
-import { CommentInterface, COMMENTS_COLLECTION } from "../model/comment.model";
+import { CommentInterface } from "../model/comment.model";
 
 class NotesRepository {
   /**

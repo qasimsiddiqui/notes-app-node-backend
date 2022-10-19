@@ -7,5 +7,3 @@ export interface NotificationInterface {
   time_created: number;
   time_read: number;
 }
-
-export const NOTIFICATIONS_COLLECTION = "notifications";

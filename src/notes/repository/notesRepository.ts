@@ -7,8 +7,12 @@ import {
   DocumentReference,
   WriteResult,
 } from "firebase-admin/lib/firestore";
-import { NotesInterface, NOTES_COLLECTION } from "../model/notes.interface";
-import { UserInterface, USERS_COLLECTION } from "../../users/model/users.model";
+import { NotesInterface } from "../model/notes.interface";
+import { UserInterface } from "../../users/model/users.model";
+import {
+  USERS_COLLECTION,
+  NOTES_COLLECTION,
+} from "../../constants/collection.constants";
 
 class NotesRepository {
   /**

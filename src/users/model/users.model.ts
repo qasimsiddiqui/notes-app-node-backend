@@ -6,5 +6,3 @@ export interface UserInterface {
   created_at: number;
   updated_at: number;
 }
-
-export const USERS_COLLECTION = "users";

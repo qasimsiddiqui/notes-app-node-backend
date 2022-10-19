@@ -4,11 +4,11 @@ import {
   WriteResult,
 } from "firebase-admin/firestore";
 import db from "../../firebase";
-import { USERS_COLLECTION } from "../../users/model/users.model";
 import {
-  NotificationInterface,
+  USERS_COLLECTION,
   NOTIFICATIONS_COLLECTION,
-} from "../model/notification.model";
+} from "../../constants/collection.constants";
+import { NotificationInterface } from "../model/notification.model";
 
 /**
  * Get all unread notifications for a user

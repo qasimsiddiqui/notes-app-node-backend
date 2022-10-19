@@ -5,7 +5,8 @@ import {
   QuerySnapshot,
   WriteResult,
 } from "firebase-admin/firestore";
-import { UserInterface, USERS_COLLECTION } from "../model/users.model";
+import { UserInterface } from "../model/users.model";
+import { USERS_COLLECTION } from "../../constants/collection.constants";
 
 class UsersRepository {
   /**
