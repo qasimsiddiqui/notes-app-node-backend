@@ -1,4 +1,4 @@
-import { UserInterface } from "../model/users.model";
+import { UserInterface } from "../model/users.interface";
 import UsersRepository from "../repository/usersRepository";
 
 class UsersService {

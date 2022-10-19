@@ -10,8 +10,8 @@ import {
   NOTES_COLLECTION,
   COMMENTS_COLLECTION,
 } from "../../constants/collection.constants";
-import * as NotificationRepository from "../../notifications/repository/notifications.repository";
-import { CommentInterface } from "../model/comment.model";
+import { CommentInterface } from "../model/comment.interface";
+import { CommentClass } from "../model/comment.model";
 
 class NotesRepository {
   /**
@@ -22,7 +22,7 @@ class NotesRepository {
   async getAll(noteId: string): Promise<CommentInterface[]> {
     const querySnapshot: QuerySnapshot = await db
       .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
-      .orderBy("time_created")
+      .orderBy(CommentClass.fieldNameTimeCreated())
       .get();
     return querySnapshot.docs.map(
       (doc: QueryDocumentSnapshot): CommentInterface => {
