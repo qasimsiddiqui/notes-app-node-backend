@@ -8,7 +8,7 @@ import {
   WriteResult,
 } from "firebase-admin/lib/firestore";
 import { NotesInterface, NOTES_COLLECTION } from "../model/notes.interface";
-import { UserInterface } from "../../users/model/users.model";
+import { UserInterface, USERS_COLLECTION } from "../../users/model/users.model";
 
 class NotesRepository {
   /**
@@ -184,7 +184,7 @@ class NotesRepository {
     userId: string
   ): Promise<any> {
     const doc: DocumentSnapshot = await db
-      .collection("users")
+      .collection(USERS_COLLECTION)
       .doc(userId)
       .get();
 
