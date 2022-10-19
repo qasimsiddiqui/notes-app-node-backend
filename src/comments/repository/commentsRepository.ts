@@ -6,8 +6,9 @@ import {
   WriteResult,
 } from "firebase-admin/firestore";
 import db from "../../firebase";
+import { NOTES_COLLECTION } from "../../notes/model/notes.interface";
 import * as NotificationRepository from "../../notifications/repository/notifications.repository";
-import { CommentInterface } from "../model/comment.model";
+import { CommentInterface, COMMENTS_COLLECTION } from "../model/comment.model";
 
 class NotesRepository {
   /**
@@ -17,7 +18,7 @@ class NotesRepository {
    */
   async getAll(noteId: string): Promise<CommentInterface[]> {
     const querySnapshot: QuerySnapshot = await db
-      .collection(`notes/${noteId}/comments`)
+      .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
       .orderBy("time_created")
       .get();
     return querySnapshot.docs.map(
@@ -45,7 +46,7 @@ class NotesRepository {
   ): Promise<any> {
     try {
       const commentDocRef: DocumentReference = db
-        .collection(`notes/${noteId}/comments`)
+        .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
         .doc();
       await commentDocRef.set({
         comment_id: commentDocRef.id,
@@ -77,7 +78,7 @@ class NotesRepository {
   ): Promise<any> {
     // Get comment
     const doc: DocumentData = await db
-      .collection(`notes/${noteId}/comments`)
+      .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
       .doc(commentId)
       .get();
 
@@ -94,7 +95,7 @@ class NotesRepository {
     }
 
     const result: WriteResult = await db
-      .collection(`notes/${noteId}/comments`)
+      .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
       .doc(commentId)
       .delete();
 
@@ -121,7 +122,7 @@ class NotesRepository {
   ): Promise<any> {
     // Get comment
     const doc: DocumentData = await db
-      .collection(`notes/${noteId}/comments`)
+      .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
       .doc(commentId)
       .get();
 
@@ -138,7 +139,7 @@ class NotesRepository {
     }
 
     const result: WriteResult = await db
-      .collection(`notes/${noteId}/comments`)
+      .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
       .doc(commentId)
       .update({
         content,

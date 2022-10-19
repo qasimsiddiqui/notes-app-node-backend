@@ -7,3 +7,5 @@ export interface CommentInterface {
   time_created: number;
   time_updated: number;
 }
+
+export const COMMENTS_COLLECTION = "comments";
