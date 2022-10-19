@@ -5,7 +5,7 @@ import {
   QuerySnapshot,
   WriteResult,
 } from "firebase-admin/firestore";
-import { UserInterface } from "../model/users.model";
+import { UserInterface, USERS_COLLECTION } from "../model/users.model";
 
 class UsersRepository {
   /**
@@ -13,7 +13,9 @@ class UsersRepository {
    * @returns {Promise<UserInterface[]>}
    */
   async getAllUsers(): Promise<UserInterface[]> {
-    const querySnapshot: QuerySnapshot = await db.collection("users").get();
+    const querySnapshot: QuerySnapshot = await db
+      .collection(USERS_COLLECTION)
+      .get();
     return querySnapshot.docs.map(
       (doc: QueryDocumentSnapshot): UserInterface => {
         return doc.data() as UserInterface;
@@ -27,7 +29,10 @@ class UsersRepository {
    * @returns {Promise<UserInterface>} user
    */
   async getUser(uid: string): Promise<UserInterface> {
-    const doc: DocumentSnapshot = await db.collection("users").doc(uid).get();
+    const doc: DocumentSnapshot = await db
+      .collection(USERS_COLLECTION)
+      .doc(uid)
+      .get();
 
     // Check if user exists
     if (!doc.exists) {
@@ -47,13 +52,16 @@ class UsersRepository {
    * @returns {Promise<any>}
    */
   async createUser(uid: string, name: string, email: string): Promise<any> {
-    const result: WriteResult = await db.collection("users").doc(uid).set({
-      id: uid,
-      name,
-      email,
-      created_at: Date.now(),
-      updated_at: Date.now(),
-    });
+    const result: WriteResult = await db
+      .collection(USERS_COLLECTION)
+      .doc(uid)
+      .set({
+        id: uid,
+        name,
+        email,
+        created_at: Date.now(),
+        updated_at: Date.now(),
+      });
 
     if (result.writeTime) {
       return { message: "New User added" };
