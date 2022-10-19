@@ -9,3 +9,5 @@ export interface NotesInterface {
   author_id: string;
   author_name: string;
 }
+
+export const NOTES_COLLECTION = "notes";
