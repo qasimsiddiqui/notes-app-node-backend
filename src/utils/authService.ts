@@ -18,14 +18,14 @@ export const middleware = async (req: Request, res: Response, next: any) => {
     const header = req.headers.authorization;
 
     // Header not found
-    if (header == undefined) {
+    if (!header) {
       res.status(403).send({ status: 403, message: "auth header is missing" });
       return;
     }
 
     // verify  auth token
     const token = header.split("Bearer ")[1];
-    if (token == undefined) {
+    if (!token) {
       res.status(403).send({ status: 403, message: "auth token is missing" });
       return;
     }

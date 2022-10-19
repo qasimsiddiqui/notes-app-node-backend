@@ -4,6 +4,10 @@ import {
   WriteResult,
 } from "firebase-admin/firestore";
 import db from "../../firebase";
+import {
+  USERS_COLLECTION,
+  NOTIFICATIONS_COLLECTION,
+} from "../../constants/collection.constants";
 import { NotificationInterface } from "../model/notification.model";
 
 /**
@@ -14,7 +18,7 @@ import { NotificationInterface } from "../model/notification.model";
 export async function getAll(uid: string): Promise<NotificationInterface[]> {
   // Get all unread notifications for a user
   const querySnapshot: QuerySnapshot = await db
-    .collection(`users/${uid}/notifications`)
+    .collection(`${USERS_COLLECTION}/${uid}/${NOTIFICATIONS_COLLECTION}`)
     .where("is_read", "==", false)
     .orderBy("time_created", "desc")
     .get();
@@ -38,7 +42,7 @@ export async function markAsRead(
 ): Promise<any> {
   // Get the notification
   const doc = await db
-    .collection(`users/${uid}/notifications`)
+    .collection(`${USERS_COLLECTION}/${uid}/${NOTIFICATIONS_COLLECTION}`)
     .doc(NotificationId)
     .get();
 
@@ -72,7 +76,9 @@ export async function addCommentNotification(
   userId: string,
   userName: string
 ): Promise<any> {
-  const docRef = db.collection(`users/${userId}/notifications`).doc();
+  const docRef = db
+    .collection(`${USERS_COLLECTION}/${userId}/${NOTIFICATIONS_COLLECTION}`)
+    .doc();
 
   const message = `${userName} commented on your note`;
 
@@ -105,7 +111,9 @@ export async function addShareNotifications(
   const batch: FirebaseFirestore.WriteBatch = db.batch();
 
   users.forEach((user: string) => {
-    const docRef = db.collection(`users/${user}/notifications`).doc();
+    const docRef = db
+      .collection(`${USERS_COLLECTION}/${user}/${NOTIFICATIONS_COLLECTION}`)
+      .doc();
     batch.create(docRef, {
       notification_id: docRef.id,
       note_id: noteId,
@@ -133,7 +141,7 @@ export async function addShareNotifications(
  */
 export async function markAllAsRead(uid: string): Promise<any> {
   const querySnapshot = await db
-    .collection(`users/${uid}/notifications`)
+    .collection(`${USERS_COLLECTION}/${uid}/${NOTIFICATIONS_COLLECTION}`)
     .where("is_read", "==", false)
     .get();
 
