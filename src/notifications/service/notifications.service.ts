@@ -1,4 +1,4 @@
-import { sendMail } from "../../utils/emailService";
+import { sendMail } from "../../utils/gmail/emailService";
 import * as NotificationRepository from "../repository/notifications.repository";
 
 /**
@@ -80,11 +80,9 @@ export async function addShareNotification(
   userName: string
 ): Promise<any> {
   try {
-    return await NotificationRepository.addShareNotifications(
-      noteId,
-      users,
-      userName
-    );
+    await NotificationRepository.addShareNotifications(noteId, users, userName);
+    await sendMail(userName);
+    return;
   } catch (error: any) {
     throw new Error(error.message);
   }
