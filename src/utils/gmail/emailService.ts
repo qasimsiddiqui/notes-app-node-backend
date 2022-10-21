@@ -5,13 +5,13 @@ import { OAuth2Client } from "googleapis-common";
 import { getOAuthClient } from "./gmail_auth";
 
 // build and encode the mail
-function buildMessage(name: string) {
+function buildMessage(to: string, name: string, senderName: string) {
   return new Promise<string>((resolve, reject) => {
     const mailOptions = {
       from: "qasim.siddiqui@aurorasolutions.io",
-      to: "qasim.siddiqui1414@gmail.com",
-      subject: "From notes app",
-      text: `${name} commented on your note`,
+      to: to,
+      subject: "Notes App",
+      text: `Hi ${name}, \n${senderName} shared a note with you.`,
       textEncoding: "base64",
     } as Options;
     const message = new MailComposer(mailOptions);
@@ -32,9 +32,9 @@ function buildMessage(name: string) {
 /**
  * Send Email
  */
-export async function sendMail(name: string) {
+export async function sendMail(to: string, name: string, senderName: string) {
   try {
-    const encodedMessage = await buildMessage(name);
+    const encodedMessage = await buildMessage(to, name, senderName);
 
     const auth: OAuth2Client = await getOAuthClient();
 

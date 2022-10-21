@@ -70,6 +70,21 @@ class UsersRepository {
       throw new Error("Error creating user");
     }
   }
+
+  /**
+   * Get details
+   */
+  async getSharedListDetails(users: string[]) {
+    const querySnapshot: QuerySnapshot = await db
+      .collection(USERS_COLLECTION)
+      .where("id", "in", users)
+      .get();
+    return querySnapshot.docs.map(
+      (doc: QueryDocumentSnapshot): UserInterface => {
+        return doc.data() as UserInterface;
+      }
+    );
+  }
 }
 
 export default new UsersRepository();

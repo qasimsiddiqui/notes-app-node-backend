@@ -41,6 +41,18 @@ class UsersService {
       throw new Error(e.message);
     }
   }
+
+  /**
+   *
+   *
+   */
+  async getSharedListDetails(users: string[]) {
+    try {
+      return await UsersRepository.getSharedListDetails(users);
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
 }
 
 export default new UsersService();
