@@ -19,7 +19,15 @@ class UsersRepository {
       .get();
     return querySnapshot.docs.map(
       (doc: QueryDocumentSnapshot): UserInterface => {
-        return doc.data() as UserInterface;
+        return {
+          id: doc.data()["id"],
+          name: doc.data()["name"],
+          email: doc.data()["email"],
+          profile_picture: doc.data()["profile_picture"],
+          created_at: doc.data()["created_at"],
+          updated_at: doc.data()["updated_at"],
+          has_token: doc.data()["refresh_token"] ? true : false,
+        } as UserInterface;
       }
     );
   }
@@ -40,9 +48,15 @@ class UsersRepository {
       throw new Error("User not found");
     }
 
-    const user: UserInterface = doc.data() as UserInterface;
-
-    return user;
+    return {
+      id: doc.data()!["id"],
+      name: doc.data()!["name"],
+      email: doc.data()!["email"],
+      profile_picture: doc.data()!["profile_picture"],
+      created_at: doc.data()!["created_at"],
+      updated_at: doc.data()!["updated_at"],
+      has_token: doc.data()!["refresh_token"] ? true : false,
+    } as UserInterface;
   }
 
   /**
@@ -62,6 +76,7 @@ class UsersRepository {
         email,
         created_at: Date.now(),
         updated_at: Date.now(),
+        refresh_token: null,
       });
 
     if (result.writeTime) {
