@@ -67,6 +67,18 @@ class UsersService {
       throw new Error(e.message);
     }
   }
+
+  /**
+   *  Update the refresh token of user's gmail account
+   *  @returns {Promise<string>}
+   */
+  async updateRefreshToken(refreshToken: string, uid: string): Promise<any> {
+    try {
+      return await UsersRepository.updateRefreshToken(refreshToken, uid);
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
 }
 
 export default new UsersService();

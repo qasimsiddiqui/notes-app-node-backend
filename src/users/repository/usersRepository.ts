@@ -100,6 +100,24 @@ class UsersRepository {
       }
     );
   }
+
+  /**
+   * Update refresh token
+   */
+  async updateRefreshToken(refreshToken: string, uid: string) {
+    const result: WriteResult = await db
+      .collection(USERS_COLLECTION)
+      .doc(uid)
+      .update({
+        refresh_token: refreshToken,
+      });
+
+    if (result.writeTime) {
+      return { message: "Token added to user" };
+    } else {
+      throw new Error("Error updating token");
+    }
+  }
 }
 
 export default new UsersRepository();

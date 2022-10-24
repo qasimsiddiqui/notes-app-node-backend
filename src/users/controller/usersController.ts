@@ -32,7 +32,7 @@ class UsersController {
       const users = await UsersService.getUser(uid);
       res.status(200).send(users);
     } catch (error) {
-      console.error(error);
+      console.error("[usersController][getUser]", error);
       res.status(500).send({ error: "Server error" });
     }
   }
@@ -58,6 +58,20 @@ class UsersController {
   async getGmailAuthorizationToken(req: Request, res: Response): Promise<void> {
     try {
       const result: string = await UsersService.getGmailAuthorizationToken();
+      res.status(200).send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: "Server error" });
+    }
+  }
+
+  async updateRefreshToken(req: Request, res: Response): Promise<void> {
+    const { refreshToken } = req.body;
+    try {
+      const result = await UsersService.updateRefreshToken(
+        refreshToken,
+        res.locals.uid
+      );
       res.status(200).send(result);
     } catch (error) {
       console.error(error);
