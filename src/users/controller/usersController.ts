@@ -54,6 +54,16 @@ class UsersController {
       res.status(500).send({ error: "Server error" });
     }
   }
+
+  async getGmailAuthorizationToken(req: Request, res: Response): Promise<void> {
+    try {
+      const result: string = await UsersService.getGmailAuthorizationToken();
+      res.status(200).send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: "Server error" });
+    }
+  }
 }
 
 export default new UsersController();

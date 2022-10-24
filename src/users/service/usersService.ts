@@ -1,3 +1,4 @@
+import { getAuthorizeURL } from "../../utils/gmail/gmail_auth";
 import { UserInterface } from "../model/users.model";
 import UsersRepository from "../repository/usersRepository";
 
@@ -43,12 +44,25 @@ class UsersService {
   }
 
   /**
-   *
-   *
+   *  Get the user details of shared list
+   *  @param {string[]} users ID of user to be retrieved
+   * @returns {Promise<UserInterface[]>} user
    */
-  async getSharedListDetails(users: string[]) {
+  async getSharedListDetails(users: string[]): Promise<UserInterface[]> {
     try {
       return await UsersRepository.getSharedListDetails(users);
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   *  Get the authorization url for gmail
+   *  @returns {Promise<string>}
+   */
+  async getGmailAuthorizationToken(): Promise<string> {
+    try {
+      return await getAuthorizeURL();
     } catch (e: any) {
       throw new Error(e.message);
     }
