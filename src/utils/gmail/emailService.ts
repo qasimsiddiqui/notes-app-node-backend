@@ -8,7 +8,6 @@ import { getOAuthClient } from "./gmail_auth";
 function buildMessage(to: string, name: string, senderName: string) {
   return new Promise<string>((resolve, reject) => {
     const mailOptions = {
-      from: "qasim.siddiqui@aurorasolutions.io",
       to: to,
       subject: "Notes App",
       text: `Hi ${name}, \n${senderName} shared a note with you.`,
