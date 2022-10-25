@@ -211,7 +211,8 @@ class NotesRepository {
       await NotificationService.addShareNotification(
         noteId,
         usersList,
-        userData.name
+        userData.name,
+        userId
       );
 
       return { message: "Note successfully shared" };

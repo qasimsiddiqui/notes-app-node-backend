@@ -32,11 +32,17 @@ function buildMessage(to: string, name: string, senderName: string) {
 /**
  * Send Email
  */
-export async function sendMail(to: string, name: string, senderName: string) {
+export async function sendMail(
+  refreshToken: string,
+  to: string,
+  name: string,
+  senderName: string
+) {
   try {
     const encodedMessage = await buildMessage(to, name, senderName);
 
     const auth: OAuth2Client = await getOAuthClient();
+    auth.setCredentials({ refresh_token: refreshToken });
 
     const gmail = google.gmail({ version: "v1", auth });
 
