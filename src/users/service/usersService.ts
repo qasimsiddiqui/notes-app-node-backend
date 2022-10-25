@@ -1,4 +1,7 @@
-import { getAuthorizeURL } from "../../utils/gmail/gmail_auth";
+import {
+  getAuthorizeURL,
+  generateRefreshTokenFromAuthCode,
+} from "../../utils/gmail/gmail_auth";
 import { UserInterface } from "../model/users.model";
 import UsersRepository from "../repository/usersRepository";
 
@@ -72,8 +75,9 @@ class UsersService {
    *  Update the refresh token of user's gmail account
    *  @returns {Promise<string>}
    */
-  async updateRefreshToken(refreshToken: string, uid: string): Promise<any> {
+  async updateRefreshToken(code: string, uid: string): Promise<any> {
     try {
+      const refreshToken = await generateRefreshTokenFromAuthCode(code);
       return await UsersRepository.updateRefreshToken(refreshToken, uid);
     } catch (e: any) {
       throw new Error(e.message);

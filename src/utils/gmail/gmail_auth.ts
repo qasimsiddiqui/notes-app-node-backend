@@ -38,3 +38,11 @@ export async function getAuthorizeURL(): Promise<string> {
   });
   return authUrl;
 }
+
+export async function generateRefreshTokenFromAuthCode(
+  code: string
+): Promise<string> {
+  let client: OAuth2Client = await getOAuthClient();
+  const { tokens } = await client.getToken(code);
+  return tokens.refresh_token!;
+}

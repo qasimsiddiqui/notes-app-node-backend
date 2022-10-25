@@ -66,10 +66,10 @@ class UsersController {
   }
 
   async updateRefreshToken(req: Request, res: Response): Promise<void> {
-    const { refreshToken } = req.body;
+    const { code } = req.body;
     try {
       const result = await UsersService.updateRefreshToken(
-        refreshToken,
+        code,
         res.locals.uid
       );
       res.status(200).send(result);
