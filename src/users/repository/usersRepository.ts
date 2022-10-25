@@ -118,6 +118,22 @@ class UsersRepository {
       throw new Error("Error updating token");
     }
   }
+
+  /**
+   * Get refresh token
+   */
+  async getRefreshToken(uid: string) {
+    try {
+      const doc: DocumentSnapshot = await db
+        .collection(USERS_COLLECTION)
+        .doc(uid)
+        .get();
+
+      return doc.data()!["refresh_token"];
+    } catch (error: any) {
+      console.error("[usersRepository][getRefreshToken]", error);
+    }
+  }
 }
 
 export default new UsersRepository();

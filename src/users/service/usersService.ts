@@ -83,6 +83,19 @@ class UsersService {
       throw new Error(e.message);
     }
   }
+
+  /**
+   * Get the refresh token of user's gmail account
+   * @param {string} uid ID of user to be retrieved
+   * @returns {Promise<string>} refresh token
+   */
+  async getRefreshToken(uid: string): Promise<string> {
+    try {
+      return await UsersRepository.getRefreshToken(uid);
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
 }
 
 export default new UsersService();
