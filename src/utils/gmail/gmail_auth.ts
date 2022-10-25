@@ -8,8 +8,6 @@ const CLIENT_ID = process.env.GMAIL_API_CLIENT_ID;
 const CLIENT_SECRET = process.env.GMAIL_API_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GMAIL_API_REDIRECT_URI;
 
-const REFRESH_TOKEN = process.env.GMAIL_API_REFRESH_TOKEN;
-
 const SCOPES = ["https://www.googleapis.com/auth/gmail.send"];
 
 /**
@@ -28,7 +26,10 @@ export async function getOAuthClient(): Promise<OAuth2Client> {
 
   return oAuth2Client;
 }
-
+/**
+ * Get the url which will be used for the consent dialog.
+ * @returns {Promise<string>}
+ */
 export async function getAuthorizeURL(): Promise<string> {
   let client: OAuth2Client = await getOAuthClient();
   const authUrl: string = client.generateAuthUrl({
@@ -39,6 +40,11 @@ export async function getAuthorizeURL(): Promise<string> {
   return authUrl;
 }
 
+/**
+ * Generates a new refresh token from the auth code.
+ * @param code
+ * @returns {Promise<string>}
+ */
 export async function generateRefreshTokenFromAuthCode(
   code: string
 ): Promise<string> {
