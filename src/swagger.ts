@@ -18,7 +18,7 @@ const swaggerDefinition = {
 const options = {
   swaggerDefinition,
   // Paths to files containing OpenAPI definitions
-  apis: [],
+  apis: ["./src/notes/notes.routes.ts", "./src/notes/model/notes.interface.ts"],
 };
 
 export const swaggerSpec = swagger(options);
