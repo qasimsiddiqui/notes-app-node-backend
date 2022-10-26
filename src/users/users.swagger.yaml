@@ -58,6 +58,7 @@ paths:
       tags:
         - Users
       summary: Create a new user
+      security: []
       requestBody:
         required: true
         content:
