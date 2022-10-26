@@ -112,21 +112,22 @@ export function notesRoutes(): Router {
    *     summary: Create a new note
    *     description: Create a new note
    *     parameters:
-   *       - in: body
-   *         name: body
-   *         required: true
-   *         schema:
-   *           type: object
-   *           properties:
-   *             body:
-   *               type: string
-   *               description: Content of the note
-   *             authorId:
-   *               type: string
-   *               description: ID of the author
-   *             authorName:
-   *               type: string
-   *               description: Name of the author
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               body:
+   *                 type: string
+   *                 description: Content of the note
+   *               authorId:
+   *                  type: string
+   *                  description: ID of the author
+   *               authorName:
+   *                 type: string
+   *                 description: Name of the author
    *     responses:
    *       '200':
    *          description: A single note
