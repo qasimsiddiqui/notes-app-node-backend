@@ -31,6 +31,7 @@ const options: swagger.OAS3Options = {
     "./src/comments/commentRoutes.ts",
     "./src/comments/model/comment.model.ts",
     "./src/notifications/notifications.swagger.yaml",
+    "./src/users/users.swagger.yaml",
   ],
 };
 
