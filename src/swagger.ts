@@ -25,10 +25,9 @@ const options: swagger.OAS3Options = {
   definition: swaggerDefinition,
   // Paths to files containing OpenAPI definitions
   apis: [
-    "./src/notes/notes.swagger.yaml",
     "./src/utils/swagger.components.ts",
-    "./src/comments/commentRoutes.ts",
-    "./src/comments/model/comment.model.ts",
+    "./src/notes/notes.swagger.yaml",
+    "./src/comments/comments.swagger.yaml",
     "./src/notifications/notifications.swagger.yaml",
     "./src/users/users.swagger.yaml",
   ],
