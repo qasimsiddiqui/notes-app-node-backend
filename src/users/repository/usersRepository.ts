@@ -19,7 +19,15 @@ class UsersRepository {
       .get();
     return querySnapshot.docs.map(
       (doc: QueryDocumentSnapshot): UserInterface => {
-        return doc.data() as UserInterface;
+        return {
+          id: doc.data()["id"],
+          name: doc.data()["name"],
+          email: doc.data()["email"],
+          profile_picture: doc.data()["profile_picture"],
+          created_at: doc.data()["created_at"],
+          updated_at: doc.data()["updated_at"],
+          has_token: doc.data()["refresh_token"] ? true : false,
+        } as UserInterface;
       }
     );
   }
@@ -40,9 +48,15 @@ class UsersRepository {
       throw new Error("User not found");
     }
 
-    const user: UserInterface = doc.data() as UserInterface;
-
-    return user;
+    return {
+      id: doc.data()!["id"],
+      name: doc.data()!["name"],
+      email: doc.data()!["email"],
+      profile_picture: doc.data()!["profile_picture"],
+      created_at: doc.data()!["created_at"],
+      updated_at: doc.data()!["updated_at"],
+      has_token: doc.data()!["refresh_token"] ? true : false,
+    } as UserInterface;
   }
 
   /**
@@ -62,12 +76,62 @@ class UsersRepository {
         email,
         created_at: Date.now(),
         updated_at: Date.now(),
+        refresh_token: null,
       });
 
     if (result.writeTime) {
       return { message: "New User added" };
     } else {
       throw new Error("Error creating user");
+    }
+  }
+
+  /**
+   * Get details
+   */
+  async getSharedListDetails(users: string[]) {
+    const querySnapshot: QuerySnapshot = await db
+      .collection(USERS_COLLECTION)
+      .where("id", "in", users)
+      .get();
+    return querySnapshot.docs.map(
+      (doc: QueryDocumentSnapshot): UserInterface => {
+        return doc.data() as UserInterface;
+      }
+    );
+  }
+
+  /**
+   * Update refresh token
+   */
+  async updateRefreshToken(refreshToken: string, uid: string) {
+    const result: WriteResult = await db
+      .collection(USERS_COLLECTION)
+      .doc(uid)
+      .update({
+        refresh_token: refreshToken,
+      });
+
+    if (result.writeTime) {
+      return { message: "Token added to user" };
+    } else {
+      throw new Error("Error updating token");
+    }
+  }
+
+  /**
+   * Get refresh token
+   */
+  async getRefreshToken(uid: string) {
+    try {
+      const doc: DocumentSnapshot = await db
+        .collection(USERS_COLLECTION)
+        .doc(uid)
+        .get();
+
+      return doc.data()!["refresh_token"];
+    } catch (error: any) {
+      console.error("[usersRepository][getRefreshToken]", error);
     }
   }
 }

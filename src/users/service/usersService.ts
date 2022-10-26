@@ -1,3 +1,7 @@
+import {
+  getAuthorizeURL,
+  generateRefreshTokenFromAuthCode,
+} from "../../utils/gmail/gmail_auth";
 import { UserInterface } from "../model/users.model";
 import UsersRepository from "../repository/usersRepository";
 
@@ -37,6 +41,57 @@ class UsersService {
   async createUser(uid: string, name: string, email: string): Promise<any> {
     try {
       return await UsersRepository.createUser(uid, name, email);
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   *  Get the user details of shared list
+   *  @param {string[]} users ID of user to be retrieved
+   * @returns {Promise<UserInterface[]>} user
+   */
+  async getSharedListDetails(users: string[]): Promise<UserInterface[]> {
+    try {
+      return await UsersRepository.getSharedListDetails(users);
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   *  Get the authorization url for gmail
+   *  @returns {Promise<string>}
+   */
+  async getGmailAuthorizationToken(): Promise<string> {
+    try {
+      return await getAuthorizeURL();
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   *  Update the refresh token of user's gmail account
+   *  @returns {Promise<string>}
+   */
+  async updateRefreshToken(code: string, uid: string): Promise<any> {
+    try {
+      const refreshToken = await generateRefreshTokenFromAuthCode(code);
+      return await UsersRepository.updateRefreshToken(refreshToken, uid);
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Get the refresh token of user's gmail account
+   * @param {string} uid ID of user to be retrieved
+   * @returns {Promise<string>} refresh token
+   */
+  async getRefreshToken(uid: string): Promise<string> {
+    try {
+      return await UsersRepository.getRefreshToken(uid);
     } catch (e: any) {
       throw new Error(e.message);
     }
