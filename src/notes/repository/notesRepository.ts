@@ -8,11 +8,12 @@ import {
   WriteResult,
 } from "firebase-admin/lib/firestore";
 import { NotesInterface } from "../model/notes.interface";
-import { UserInterface } from "../../users/model/users.model";
+import { UserInterface } from "../../users/model/users.interface";
 import {
   USERS_COLLECTION,
   NOTES_COLLECTION,
 } from "../../constants/collection.constants";
+import { NotesClass } from "../model/notes.model";
 
 class NotesRepository {
   /**
@@ -24,8 +25,8 @@ class NotesRepository {
   async getAllNotes(uid: string): Promise<NotesInterface[]> {
     const querySnapshot: QuerySnapshot = await db
       .collection(NOTES_COLLECTION)
-      .where("time_deleted", "==", null)
-      .where("author_id", "==", uid)
+      .where(NotesClass.fieldNameTimeDeleted(), "==", null)
+      .where(NotesClass.fieldNameAuthorID(), "==", uid)
       .get();
     return querySnapshot.docs.map(
       (doc: QueryDocumentSnapshot): NotesInterface => {
@@ -230,8 +231,8 @@ class NotesRepository {
   async getSharedNotes(uid: string): Promise<NotesInterface[]> {
     const querySnapshot: QuerySnapshot = await db
       .collection(NOTES_COLLECTION)
-      .where("time_deleted", "==", null)
-      .where("shared_to", "array-contains", uid)
+      .where(NotesClass.fieldNameTimeDeleted(), "==", null)
+      .where(NotesClass.fieldNameSharedTo(), "array-contains", uid)
       .get();
 
     return querySnapshot.docs.map(

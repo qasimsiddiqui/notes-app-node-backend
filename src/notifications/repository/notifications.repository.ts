@@ -8,7 +8,8 @@ import {
   USERS_COLLECTION,
   NOTIFICATIONS_COLLECTION,
 } from "../../constants/collection.constants";
-import { NotificationInterface } from "../model/notification.model";
+import { NotificationInterface } from "../model/notification.interface";
+import { NotificationClass } from "../model/notification.model";
 
 /**
  * Get all unread notifications for a user
@@ -19,8 +20,8 @@ export async function getAll(uid: string): Promise<NotificationInterface[]> {
   // Get all unread notifications for a user
   const querySnapshot: QuerySnapshot = await db
     .collection(`${USERS_COLLECTION}/${uid}/${NOTIFICATIONS_COLLECTION}`)
-    .where("is_read", "==", false)
-    .orderBy("time_created", "desc")
+    .where(NotificationClass.fieldNameisRead(), "==", false)
+    .orderBy(NotificationClass.fieldNameTimeCreated(), "desc")
     .get();
 
   return querySnapshot.docs.map(
@@ -142,7 +143,7 @@ export async function addShareNotifications(
 export async function markAllAsRead(uid: string): Promise<any> {
   const querySnapshot = await db
     .collection(`${USERS_COLLECTION}/${uid}/${NOTIFICATIONS_COLLECTION}`)
-    .where("is_read", "==", false)
+    .where(NotificationClass.fieldNameisRead(), "==", false)
     .get();
 
   // No notification to mark as read
