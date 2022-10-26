@@ -1,3 +1,4 @@
+import { sendShareEmails } from "../../utils/gmail/email";
 import * as NotificationRepository from "../repository/notifications.repository";
 
 /**
@@ -61,6 +62,28 @@ export async function addCommentNotification(
       userId,
       userName
     );
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+/**
+ * Add Notification on Comment
+ * @param {string} noteId Notification ID
+ * @param {string} users User IDs
+ * @param {string} userName User Name
+ * @returns {Promise<any>}
+ */
+export async function addShareNotification(
+  noteId: string,
+  users: string[],
+  userName: string,
+  uid: string
+): Promise<any> {
+  try {
+    await NotificationRepository.addShareNotifications(noteId, users, userName);
+    await sendShareEmails(uid, users, userName);
+    return;
   } catch (error: any) {
     throw new Error(error.message);
   }
