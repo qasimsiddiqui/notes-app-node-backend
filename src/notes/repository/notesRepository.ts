@@ -1,5 +1,5 @@
 import db from "../../firebase";
-import * as NotificationRepository from "../../notifications/repository/notifications.repository";
+import * as NotificationService from "../../notifications/service/notifications.service";
 import {
   QuerySnapshot,
   QueryDocumentSnapshot,
@@ -209,10 +209,11 @@ class NotesRepository {
 
     if (result.writeTime) {
       // Send notification to all users in the list
-      await NotificationRepository.addShareNotifications(
+      await NotificationService.addShareNotification(
         noteId,
         usersList,
-        userData.name
+        userData.name,
+        userId
       );
 
       return { message: "Note successfully shared" };

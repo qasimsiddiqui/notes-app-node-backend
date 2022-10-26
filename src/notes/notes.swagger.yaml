@@ -1,0 +1,282 @@
+paths:
+  /notes:
+    get:
+      tags:
+        - Notes
+      summary: Retrieve a list of all user's notes
+      description: Retrieve a list of all user's notes that the user is authored
+      responses:
+        200:
+          description: An array of notes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Note"
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+
+  /note/{id}:
+    get:
+      tags:
+        - Notes
+      summary: Retrieve a note by id
+      description: Retrieve a note by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of note to retrieve
+      responses:
+        200:
+          description: A single note
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error type
+                  message:
+                    type: string
+                    description: Error message
+    patch:
+      tags:
+        - Notes
+      summary: Update a new note
+      description: Update a new note
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of note to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  description: Content of the note
+      responses:
+        200:
+          description: Note updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response message
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+    delete:
+      tags:
+        - Notes
+      summary: Delete a new note
+      description: Delete a new note
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of note to retrieve
+      responses:
+        200:
+          description: A single note
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response message
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+  /note:
+    put:
+      tags:
+        - Notes
+      summary: Create a new note
+      description: Create a new note
+      parameters:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  description: Content of the note
+                authorId:
+                  type: string
+                  description: ID of the author
+                authorName:
+                  type: string
+                  description: Name of the author
+      responses:
+        200:
+          description: Note created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response message
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+  /note/share:
+    get:
+      tags:
+        - Notes
+      summary: Retrieve a list of all notes shared with user
+      description: Retrieve a list of all notes that are shared with the user
+      responses:
+        200:
+          description: An array of notes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Note"
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+    post:
+      tags:
+        - Notes
+      summary: Share a note
+      description: Share a note with a list of users
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              noteId:
+                type: string
+                description: ID of the note
+              userId:
+                type: array
+                description: IDs of the users to share the note with
+                items:
+                  type: string
+      responses:
+        200:
+          description: Note shared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response message
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+
+components:
+  schemas:
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The auto-generated id of the note
+        body:
+          type: string
+          description: The body of the note
+        time_created:
+          type: number
+          description: The time the note was created (in milliseconds elapsed since Epoch)
+        time_updated:
+          type: number
+          description: The time the note was updated (in milliseconds elapsed since Epoch)
+        time_deleted:
+          type: number
+          nullable: true
+          description: The time the note was deleted (in milliseconds elapsed since Epoch)
+        isEdited:
+          type: boolean
+          description: Whether the note has been edited
+        shared_to:
+          type: array
+          description: The users that the note is shared to
+          items:
+            type: string
+        author_id:
+          type: string
+          description: The id of the user that created the note
+        author_name:
+          type: string
+          description: The name of the user that created the note
