@@ -4,6 +4,8 @@ import userRoutes from "./users/userRoutes";
 import commentRoutes from "./comments/commentRoutes";
 import notificationsRoutes from "./notifications/notifications.routes";
 import * as dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./swagger";
 
 const cors = require("cors");
 const app: Application = express();
@@ -22,6 +24,8 @@ app.use("/v1/api/", notesRoutes);
 app.use("/v1/api/", userRoutes);
 app.use("/v1/api/", commentRoutes);
 app.use("/v1/api/", notificationsRoutes);
+
+app.use("/v1/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 try {
   app.listen(4000, (): void => {
