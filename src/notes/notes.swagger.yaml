@@ -64,22 +64,33 @@ paths:
       summary: Update a new note
       description: Update a new note
       parameters:
-        - in: body
-          name: body
+        - in: path
+          name: id
           required: true
           schema:
-            type: object
-            properties:
-              body:
-                type: string
-                description: Content of the note
+            type: string
+          description: ID of note to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  description: Content of the note
       responses:
         200:
-          description: A single note
+          description: Note updated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Note"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response message
         500:
           description: Server error
           content:
@@ -108,7 +119,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Note"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response message
         500:
           description: Server error
           content:
@@ -144,11 +159,15 @@ paths:
                   description: Name of the author
       responses:
         200:
-          description: A single note
+          description: Note created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Note"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response message
         500:
           description: Server error
           content:
@@ -159,7 +178,6 @@ paths:
                   error:
                     type: string
                     description: Error message
-
   /note/share:
     get:
       tags:
@@ -211,7 +229,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Note"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response message
         500:
           description: Server error
           content:
@@ -241,14 +263,17 @@ components:
           type: number
           description: The time the note was updated (in milliseconds elapsed since Epoch)
         time_deleted:
-          type: number | null
+          type: number
+          nullable: true
           description: The time the note was deleted (in milliseconds elapsed since Epoch)
         isEdited:
           type: boolean
           description: Whether the note has been edited
         shared_to:
-          type: string[]
+          type: array
           description: The users that the note is shared to
+          items:
+            type: string
         author_id:
           type: string
           description: The id of the user that created the note
