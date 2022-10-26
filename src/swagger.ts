@@ -28,6 +28,8 @@ const options: swagger.OAS3Options = {
     "./src/notes/notes.routes.ts",
     "./src/notes/model/notes.interface.ts",
     "./src/utils/swagger.components.ts",
+    "./src/comments/commentRoutes.ts",
+    "./src/comments/model/comment.model.ts",
   ],
 };
 
