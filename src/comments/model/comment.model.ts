@@ -1,6 +1,6 @@
 import { CommentInterface } from "./comment.interface";
 
-export class CommentClass implements CommentInterface {
+export class Comment implements CommentInterface {
   author_id: string;
   author_name: string;
   comment_id: string;

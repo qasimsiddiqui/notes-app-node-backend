@@ -11,7 +11,7 @@ import {
   COMMENTS_COLLECTION,
 } from "../../constants/collection.constants";
 import { CommentInterface } from "../model/comment.interface";
-import { CommentClass } from "../model/comment.model";
+import { Comment } from "../model/comment.model";
 
 class NotesRepository {
   /**
@@ -22,7 +22,7 @@ class NotesRepository {
   async getAll(noteId: string): Promise<CommentInterface[]> {
     const querySnapshot: QuerySnapshot = await db
       .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
-      .orderBy(CommentClass.fieldNameTimeCreated())
+      .orderBy(Comment.fieldNameTimeCreated())
       .get();
     return querySnapshot.docs.map(
       (doc: QueryDocumentSnapshot): CommentInterface => {
@@ -52,7 +52,7 @@ class NotesRepository {
         .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
         .doc();
 
-      const comment = new CommentClass();
+      const comment = new Comment();
 
       // Set data
       comment.setCommentId(commentDocRef.id);
@@ -135,9 +135,7 @@ class NotesRepository {
       throw new Error("Comment does not exist");
     }
 
-    const comment: CommentClass = new CommentClass(
-      doc.data() as CommentInterface
-    );
+    const comment: Comment = new Comment(doc.data() as CommentInterface);
 
     // Check if comment was created by user
     if (comment.author_id !== userId) {
