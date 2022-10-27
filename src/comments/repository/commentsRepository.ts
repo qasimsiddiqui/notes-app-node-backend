@@ -17,18 +17,16 @@ class NotesRepository {
   /**
    * Get all comments for a note
    * @param {string} noteId Note ID
-   * @returns {Promise<CommentInterface[]>}
+   * @returns {Promise<Comment[]>}
    */
-  async getAll(noteId: string): Promise<CommentInterface[]> {
+  async getAll(noteId: string): Promise<Comment[]> {
     const querySnapshot: QuerySnapshot = await db
       .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
       .orderBy(Comment.fieldNameTimeCreated())
       .get();
-    return querySnapshot.docs.map(
-      (doc: QueryDocumentSnapshot): CommentInterface => {
-        return doc.data() as CommentInterface;
-      }
-    );
+    return querySnapshot.docs.map((doc: QueryDocumentSnapshot): Comment => {
+      return new Comment(doc.data() as CommentInterface);
+    });
   }
 
   /**
