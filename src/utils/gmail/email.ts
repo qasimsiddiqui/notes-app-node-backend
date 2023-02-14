@@ -1,4 +1,4 @@
-import { UserInterface } from "../../users/model/users.model";
+import { UserInterface } from "../../users/model/users.interface";
 import { sendMail } from "./emailService";
 import UserService from "../../users/service/usersService";
 

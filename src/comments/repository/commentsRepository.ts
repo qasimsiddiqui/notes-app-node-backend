@@ -10,25 +10,23 @@ import {
   NOTES_COLLECTION,
   COMMENTS_COLLECTION,
 } from "../../constants/collection.constants";
-import * as NotificationRepository from "../../notifications/repository/notifications.repository";
-import { CommentInterface } from "../model/comment.model";
+import { CommentInterface } from "../model/comment.interface";
+import { Comment } from "../model/comment.model";
 
 class NotesRepository {
   /**
    * Get all comments for a note
    * @param {string} noteId Note ID
-   * @returns {Promise<CommentInterface[]>}
+   * @returns {Promise<Comment[]>}
    */
-  async getAll(noteId: string): Promise<CommentInterface[]> {
+  async getAll(noteId: string): Promise<Comment[]> {
     const querySnapshot: QuerySnapshot = await db
       .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
-      .orderBy("time_created")
+      .orderBy(Comment.fieldNameTimeCreated())
       .get();
-    return querySnapshot.docs.map(
-      (doc: QueryDocumentSnapshot): CommentInterface => {
-        return doc.data() as CommentInterface;
-      }
-    );
+    return querySnapshot.docs.map((doc: QueryDocumentSnapshot): Comment => {
+      return new Comment(doc.data() as CommentInterface);
+    });
   }
 
   /**
@@ -51,15 +49,16 @@ class NotesRepository {
       const commentDocRef: DocumentReference = db
         .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
         .doc();
-      await commentDocRef.set({
-        comment_id: commentDocRef.id,
-        content,
-        author_id: userId,
-        author_name: userName,
-        is_edited: false,
-        time_created: Date.now(),
-        time_updated: Date.now(),
-      });
+
+      const comment = new Comment();
+
+      // Set data
+      comment.setCommentId(commentDocRef.id);
+      comment.setContent(content);
+      comment.setAuthorId(userId);
+      comment.setAuthorName(userName);
+
+      await commentDocRef.set(comment.getMap());
 
       return { message: "Comment successfully added" };
     } catch (error: any) {
@@ -134,21 +133,20 @@ class NotesRepository {
       throw new Error("Comment does not exist");
     }
 
-    const comment: CommentInterface = doc.data() as CommentInterface;
+    const comment: Comment = new Comment(doc.data() as CommentInterface);
 
     // Check if comment was created by user
     if (comment.author_id !== userId) {
       throw new Error("You are not authorized to edit this comment");
     }
 
+    // Update comment
+    comment.updateData(content);
+
     const result: WriteResult = await db
       .collection(`${NOTES_COLLECTION}/${noteId}/${COMMENTS_COLLECTION}`)
       .doc(commentId)
-      .update({
-        content,
-        is_edited: true,
-        time_updated: Date.now(),
-      });
+      .update(comment.getMap());
 
     if (result.writeTime) {
       return { message: "Comment successfully updated" };

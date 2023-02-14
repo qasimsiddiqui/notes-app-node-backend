@@ -1,12 +1,13 @@
 import CommentsRepository from "../repository/commentsRepository";
 import * as NotificationService from "../../notifications/service/notifications.service";
+import { Comment } from "../model/comment.model";
 class CommentService {
   /**
    * Get all comments for a note
    * @param {string} noteId Note ID
    * @returns {Promise<any>}
    */
-  async getAll(noteId: string): Promise<any> {
+  async getAll(noteId: string): Promise<Comment[]> {
     try {
       return await CommentsRepository.getAll(noteId);
     } catch (e: any) {
